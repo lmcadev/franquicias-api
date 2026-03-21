@@ -1,0 +1,87 @@
+# Dockerfile para Nginx - Reverse Proxy en Producción
+# Versión: 1.0
+# Base: nginx:1.27-alpine (lightweight)
+# Propósito: Reverse proxy, SSL/TLS termination, load balancing
+
+FROM nginx:1.27-alpine
+
+# ============================================================================
+# METADATOS
+# ============================================================================
+LABEL org.opencontainers.image.title="Franquicias Nginx Proxy"
+LABEL org.opencontainers.image.version="1.0"
+LABEL org.opencontainers.image.description="Nginx reverse proxy for Franquicias API"
+LABEL org.opencontainers.image.authors="Accenture"
+
+# ============================================================================
+# ENVIRONMENT VARIABLES
+# ============================================================================
+ENV NGINX_VERSION=1.27 \
+    NGINX_USER=nginx \
+    NGINX_UID=101 \
+    NGINX_GID=101
+
+# ============================================================================
+# PREPARACIÓN DEL SISTEMA
+# ============================================================================
+RUN apk add --no-cache \
+    curl \
+    openssl \
+    ca-certificates && \
+    # Crear directorios para SSL
+    mkdir -p /etc/nginx/ssl && \
+    mkdir -p /var/cache/nginx && \
+    mkdir -p /var/log/nginx && \
+    # Ajustar permisos
+    chown -R ${NGINX_USER}:${NGINX_USER} /var/cache/nginx && \
+    chown -R ${NGINX_USER}:${NGINX_USER} /var/log/nginx && \
+    # Limpiar cache apk
+    rm -rf /var/cache/apk/*
+
+# ============================================================================
+# COPIAR CONFIGURACIÓN
+# ============================================================================
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker/ /etc/nginx/conf.d/
+
+# ============================================================================
+# CREAR CERTIFICADOS AUTO-FIRMADOS (desarrollo/testing)
+# ============================================================================
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/nginx/ssl/key.pem \
+    -out /etc/nginx/ssl/cert.pem \
+    -subj "/C=CO/ST=Bogota/L=Bogota/O=Accenture/CN=franquicias-api" && \
+    chmod 600 /etc/nginx/ssl/key.pem && \
+    chmod 644 /etc/nginx/ssl/cert.pem
+
+# ============================================================================
+# USUARIO NO-ROOT
+# ============================================================================
+RUN addgroup -g ${NGINX_GID} ${NGINX_USER} 2>/dev/null || true && \
+    adduser -D -u ${NGINX_UID} -G ${NGINX_USER} ${NGINX_USER} 2>/dev/null || true
+
+# ============================================================================
+# HEALTHCHECK
+# ============================================================================
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost/health || exit 1
+
+# ============================================================================
+# SECURITY: RUN AS NON-ROOT
+# ============================================================================
+USER ${NGINX_USER}
+
+# ============================================================================
+# EXPOSE PORTS
+# ============================================================================
+EXPOSE 80 443
+
+# ============================================================================
+# VOLUMES
+# ============================================================================
+VOLUME ["/var/log/nginx", "/etc/nginx/ssl"]
+
+# ============================================================================
+# STARTUP
+# ============================================================================
+CMD ["nginx", "-g", "daemon off;"]

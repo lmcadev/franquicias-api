@@ -54,6 +54,7 @@ public class DatabaseConfig {
         return TransactionalOperator.create(transactionManager);
     }
 
+    /*
     @Bean
     public ConnectionFactoryInitializer initializer(ConnectionFactory connectionFactory) {
         ConnectionFactoryInitializer initializer = new ConnectionFactoryInitializer();
@@ -65,4 +66,5 @@ public class DatabaseConfig {
         initializer.setDatabasePopulator(populator);
         return initializer;
     }
+    */
 }

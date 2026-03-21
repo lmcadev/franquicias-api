@@ -1,0 +1,86 @@
+# ============================================
+# DOCKERFILE - PRODUCCIÓN
+# Imagen optimizada, segura y de bajo tamaño
+# ============================================
+
+FROM maven:3.9-eclipse-temurin-17 as builder
+
+WORKDIR /app
+
+# Copiar archivos de configuración de Maven
+COPY pom.xml .
+COPY .mvn .mvn
+
+# Descargar dependencias (cacheable layer)
+RUN mvn dependency:go-offline -B
+
+# Copiar código fuente
+COPY src ./src
+
+# Compilar con optimizaciones
+RUN mvn clean package \
+    -DskipTests \
+    -Dmaven.compiler.source=17 \
+    -Dmaven.compiler.target=17 \
+    -q
+
+# ============================================
+# Imagen de ejecución - PRODUCCIÓN (Slim)
+# ============================================
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /app
+
+# Crear usuario no-root para seguridad
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Instalar curl para healthcheck (necesario)
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Crear directorio de logs
+RUN mkdir -p /app/logs && chown -R appuser:appuser /app/logs
+
+# Variables de entorno por defecto (producción)
+ENV SERVER_PORT=8080 \
+    SPRING_PROFILES_ACTIVE=prod \
+    LOG_LEVEL=WARN \
+    SPRING_LOG_LEVEL=WARN \
+    SWAGGER_ENABLED=false \
+    TZ=UTC
+
+# Copiar JAR desde builder
+COPY --from=builder --chown=appuser:appuser /app/target/franquicias-*.jar /app/franquicias-api.jar
+
+# Cambiar a usuario no-root
+USER appuser
+
+# Exponer puerto
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=60s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# Punto de entrada con optimizaciones de JVM
+ENTRYPOINT ["java", \
+    "-server", \
+    "-Xmx1024m", \
+    "-Xms512m", \
+    "-XX:+UseG1GC", \
+    "-XX:MaxGCPauseMillis=200", \
+    "-XX:+ParallelRefProcEnabled", \
+    "-XX:+AlwaysPreTouch", \
+    "-Djava.awt.headless=true", \
+    "-Dfile.encoding=UTF-8", \
+    "-jar", \
+    "franquicias-api.jar"]
+
+# Labels para metadatos
+LABEL org.opencontainers.image.title="Franquicias API Production"
+LABEL org.opencontainers.image.version="1.0.0"
+LABEL org.opencontainers.image.description="API REST para gestión de franquicias (producción)"
+LABEL org.opencontainers.image.authors="Luis Miguel"
+LABEL org.opencontainers.image.url="https://github.com/lmcadev/franquicias-api"
+LABEL org.opencontainers.image.source="https://github.com/lmcadev/franquicias-api"
+LABEL org.opencontainers.image.vendor="Accenture"

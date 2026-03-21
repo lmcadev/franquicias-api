@@ -70,13 +70,14 @@ public class RegisterUseCase {
                 // Hash de contraseña
                 user.setPassword(passwordEncoder.encode(request.getPassword()));
                 
-                // Guardar usuario
-                return userRepository.save(user);
+                // Guardar usuario y luego recuperarlo con su ID asignado
+                return userRepository.save(user)
+                    .flatMap(savedUser -> userRepository.findByEmail(savedUser.getEmail()));
             })
             .map(savedUser -> {
                 // Generar JWT token con JwtProvider
                 String token = jwtProvider.generateToken(savedUser.getId(), savedUser.getEmail());
-                return userMapper.toResponse(savedUser, "Bearer " + token);
+                return userMapper.toResponse(savedUser, token);
             });
     }
 }

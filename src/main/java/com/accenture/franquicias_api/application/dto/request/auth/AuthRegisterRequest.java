@@ -44,13 +44,13 @@ public class AuthRegisterRequest {
     @NotBlank(message = "El email es requerido")
     @Email(message = "El email debe ser válido")
     @JsonProperty("email")
-    @Schema(description = "Email del usuario (único)", example = "newuser@example.com")
+    @Schema(description = "Email del usuario (único)", example = "usuario@example.com")
     private String email;
 
     @NotBlank(message = "La contraseña es requerida")
     @Size(min = 8, message = "La contraseña debe tener mínimo 8 caracteres")
     @JsonProperty("password")
-    @Schema(description = "Contraseña del usuario (mínimo 8 caracteres)", example = "password123")
+    @Schema(description = "Contraseña del usuario (mínimo 8 caracteres)", example = "ejmplo123")
     private String password;
 
     @NotBlank(message = "El nombre es requerido")

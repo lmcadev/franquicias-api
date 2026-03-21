@@ -41,4 +41,26 @@ public interface FranchiseEntityMapper {
      * @return la entidad R2DBC de persistencia con los mismos datos
      */
     FranchiseEntity toEntity(Franchise domain);
+
+    /**
+     * Conversión manual de entidad de persistencia a dominio.
+     * Asegura que todos los campos, incluyendo el ID generado, se mapeen correctamente.
+     *
+     * @param entity la entidad de persistencia
+     * @return la entidad de dominio con ID explícitamente asignado
+     */
+    default Franchise toDomainManual(FranchiseEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        Franchise franchise = new Franchise();
+        franchise.setId(entity.getId());
+        franchise.setName(entity.getName());
+        franchise.setDescription(entity.getDescription());
+        franchise.setCreatedBy(entity.getCreatedBy());
+        franchise.setCreatedAt(entity.getCreatedAt());
+        franchise.setUpdatedAt(entity.getUpdatedAt());
+        franchise.setDeletedAt(entity.getDeletedAt());
+        return franchise;
+    }
 }

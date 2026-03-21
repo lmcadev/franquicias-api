@@ -42,11 +42,11 @@ public class AuthLoginRequest {
     @NotBlank(message = "El email es requerido")
     @Email(message = "El email debe ser válido")
     @JsonProperty("email")
-    @Schema(description = "Email del usuario", example = "user@example.com")
+    @Schema(description = "Email del usuario", example = "admin@correo.com")
     private String email;
 
     @NotBlank(message = "La contraseña es requerida")
     @JsonProperty("password")
-    @Schema(description = "Contraseña del usuario", example = "password123")
+    @Schema(description = "Contraseña del usuario", example = "admin123")
     private String password;
 }

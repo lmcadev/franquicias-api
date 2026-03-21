@@ -47,8 +47,16 @@ public class CreateFranchiseUseCase {
         Franchise franchise = franchiseMapper.toDomain(request);
         franchise.setCreatedBy(userId);
         
-        // Guardar franquicia
+        // Guardar franquicia y devolver exactamente la entidad recién creada.
+        // Fallback: si R2DBC no devuelve ID en el save, resolver por nombre.
         return franchiseRepository.save(franchise)
+            .flatMap(saved -> {
+                if (saved.getId() != null) {
+                    return Mono.just(saved);
+                }
+                return franchiseRepository.findByName(request.getName())
+                    .switchIfEmpty(Mono.error(new IllegalStateException("No se pudo resolver la franquicia creada")));
+            })
             .map(franchiseMapper::toResponse);
     }
 }

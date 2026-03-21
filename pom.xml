@@ -25,7 +25,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <r2dbc.version>1.5.4</r2dbc.version>
         <jjwt.version>0.12.3</jjwt.version>
-        <springdoc.version>2.0.2</springdoc.version>
+        <springdoc.version>3.0.0</springdoc.version>
     </properties>
 
     <dependencies>
@@ -46,6 +46,14 @@
             <groupId>dev.miku</groupId>
             <artifactId>r2dbc-mysql</artifactId>
             <version>0.8.2.RELEASE</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Mysql Connector Java para compatibilidad -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
             <scope>runtime</scope>
         </dependency>
 

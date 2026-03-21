@@ -62,4 +62,13 @@ public interface FranchiseR2dbcRepository extends R2dbcRepository<FranchiseEntit
      */
     @Query("SELECT COUNT(*) FROM franchises WHERE deleted_at IS NULL")
     Mono<Long> countNotDeleted();
+
+    /**
+     * Busca una franquicia por nombre, excluyendo registros eliminados suavemente.
+     *
+     * @param name el nombre de la franquicia a buscar
+     * @return {@code Mono} conteniendo la {@link FranchiseEntity} si se encuentra
+     */
+    @Query("SELECT * FROM franchises WHERE name = :name AND deleted_at IS NULL LIMIT 1")
+    Mono<FranchiseEntity> findByNameAndNotDeleted(String name);
 }

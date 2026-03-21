@@ -69,7 +69,7 @@ public class LoginUseCase {
                 
                 // Generar JWT token con JwtProvider
                 String token = jwtProvider.generateToken(user.getId(), user.getEmail());
-                return Mono.just(userMapper.toResponse(user, "Bearer " + token));
+                return Mono.just(userMapper.toResponse(user, token));
             });
     }
 }
