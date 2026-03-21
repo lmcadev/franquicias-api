@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: franquicias-api
+
+  # Configuración de R2DBC (Reactive Database Connectivity)
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/franquicias_db
+    username: root
+    password: password
+    pool:
+      initial-size: 10
+      max-size: 20
+      max-idle-time: 30m
+      validation-query: SELECT 1
+
+  # JPA Configuration (aunque usamos R2DBC, evita conflictos)
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  # Jackson Configuration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+  # Security
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080
+
+# Configuración del servidor
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.franquicias: DEBUG
+    org.springframework.web: DEBUG
+    io.r2dbc: DEBUG
+
+# Documentación Swagger/OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+
+# Configuración de JWT
+jwt:
+  secret: ${JWT_SECRET:57990c74629e1fa30a55a37ee8fcd0ae39991e4fdf3271f227d6d2bfb5f75c29d}
+  expiration: 86400000  # 24 horas en milisegundos
