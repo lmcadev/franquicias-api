@@ -10,6 +10,14 @@ import com.accenture.franquicias_api.application.usecase.product.GetMaxStockProd
 import com.accenture.franquicias_api.application.usecase.product.GetProductsByBranchUseCase;
 import com.accenture.franquicias_api.application.usecase.product.UpdateProductNameUseCase;
 import com.accenture.franquicias_api.application.usecase.product.UpdateProductStockUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +44,8 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@Tag(name = "Productos", description = "Endpoints para gestionar productos de sucursales (CRUD con autenticación)")
+@SecurityRequirement(name = "Authorization")
 public class ProductController {
     
     private final AddProductUseCase addProductUseCase;
@@ -50,7 +60,23 @@ public class ProductController {
      * POST /api/branches/{branchId}/products
      */
     @PostMapping("/branches/{branchId}/products")
+    @Operation(
+        summary = "Agregar nuevo producto",
+        description = "Crea un nuevo producto en una sucursal con stock y precio inicial"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "Producto agregado exitosamente",
+            content = @Content(schema = @Schema(implementation = ProductResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+        @ApiResponse(responseCode = "404", description = "Sucursal no encontrada"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public Mono<ResponseEntity<ProductResponse>> add(
+            @Parameter(description = "ID de la sucursal", required = true, example = "1")
             @PathVariable Long branchId,
             @Valid @RequestBody ProductCreateRequest request) {
         return addProductUseCase.execute(branchId, request)
@@ -62,7 +88,23 @@ public class ProductController {
      * PUT /api/products/{id}/name
      */
     @PutMapping("/products/{id}/name")
+    @Operation(
+        summary = "Actualizar nombre del producto",
+        description = "Actualiza el nombre de un producto existente"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Nombre actualizado exitosamente",
+            content = @Content(schema = @Schema(implementation = ProductResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+        @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public Mono<ResponseEntity<ProductResponse>> updateName(
+            @Parameter(description = "ID del producto a actualizar", required = true, example = "1")
             @PathVariable Long id,
             @Valid @RequestBody ProductUpdateNameRequest request) {
         return updateProductNameUseCase.execute(id, request)
@@ -74,7 +116,23 @@ public class ProductController {
      * PATCH /api/products/{id}/stock
      */
     @PatchMapping("/products/{id}/stock")
+    @Operation(
+        summary = "Actualizar stock del producto",
+        description = "Actualiza la cantidad de stock de un producto existente"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Stock actualizado exitosamente",
+            content = @Content(schema = @Schema(implementation = ProductResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+        @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public Mono<ResponseEntity<ProductResponse>> updateStock(
+            @Parameter(description = "ID del producto a actualizar", required = true, example = "1")
             @PathVariable Long id,
             @Valid @RequestBody ProductStockUpdateRequest request) {
         return updateProductStockUseCase.execute(id, request)
@@ -86,7 +144,19 @@ public class ProductController {
      * DELETE /api/products/{id}
      */
     @DeleteMapping("/products/{id}")
-    public Mono<ResponseEntity<Void>> delete(@PathVariable Long id) {
+    @Operation(
+        summary = "Eliminar producto",
+        description = "Elimina un producto existente (soft delete)"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Producto eliminado exitosamente"),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+        @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public Mono<ResponseEntity<Void>> delete(
+            @Parameter(description = "ID del producto a eliminar", required = true, example = "1")
+            @PathVariable Long id) {
         return deleteProductUseCase.execute(id)
             .map(v -> ResponseEntity.noContent().<Void>build());
     }
@@ -96,9 +166,26 @@ public class ProductController {
      * GET /api/branches/{branchId}/products?page=0&size=20
      */
     @GetMapping("/branches/{branchId}/products")
+    @Operation(
+        summary = "Obtener productos por sucursal",
+        description = "Retorna listado paginado de productos de una sucursal"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Listado de productos obtenido exitosamente",
+            content = @Content(schema = @Schema(implementation = ProductResponse.class))
+        ),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+        @ApiResponse(responseCode = "404", description = "Sucursal no encontrada"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public Flux<ProductResponse> getByBranch(
+            @Parameter(description = "ID de la sucursal", required = true, example = "1")
             @PathVariable Long branchId,
+            @Parameter(description = "Número de página (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Tamaño de la página", example = "20")
             @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return getProductsByBranchUseCase.execute(branchId, pageable);
@@ -109,7 +196,22 @@ public class ProductController {
      * GET /api/franchises/{franchiseId}/max-stock-product
      */
     @GetMapping("/franchises/{franchiseId}/max-stock-product")
+    @Operation(
+        summary = "Obtener producto con mayor stock",
+        description = "Retorna el producto con mayor stock en una franquicia"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Producto obtenido exitosamente",
+            content = @Content(schema = @Schema(implementation = ProductResponse.class))
+        ),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+        @ApiResponse(responseCode = "404", description = "Franquicia no encontrada o sin productos"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public Mono<ResponseEntity<ProductResponse>> getMaxStockByFranchise(
+            @Parameter(description = "ID de la franquicia", required = true, example = "1")
             @PathVariable Long franchiseId) {
         return getMaxStockProductByFranchiseUseCase.execute(franchiseId)
             .map(response -> ResponseEntity.ok(response));
