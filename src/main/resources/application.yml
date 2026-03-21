@@ -22,8 +22,6 @@ spring:
 
   # Jackson Configuration
   jackson:
-    serialization:
-      write-dates-as-timestamps: false
     default-property-inclusion: non_null
 
   # Security
@@ -43,7 +41,7 @@ server:
 logging:
   level:
     root: INFO
-    com.franquicias: DEBUG
+    com.accenture.franquicias_api: DEBUG
     org.springframework.web: DEBUG
     io.r2dbc: DEBUG
 
