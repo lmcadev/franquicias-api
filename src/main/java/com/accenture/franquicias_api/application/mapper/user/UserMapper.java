@@ -7,6 +7,7 @@ import com.accenture.franquicias_api.domain.entity.user.User;
 import com.accenture.franquicias_api.domain.enums.UserRole;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 /**
  * Mapper para conversión entre DTOs de autenticación y entidad de dominio Usuario.
@@ -56,7 +57,24 @@ public interface UserMapper {
      * @param token el token JWT generado
      * @return la respuesta con token y metadatos
      */
-    @Mapping(target = "expiresIn", expression = "java(86400000L)")
-    @Mapping(target = "tokenType", constant = "Bearer")
-    AuthTokenResponse toResponse(User user, String token);
+    default AuthTokenResponse toResponse(User user, String token) {
+        if (user == null && token == null) {
+            return null;
+        }
+        
+        return AuthTokenResponse.builder()
+            .userId(user != null ? user.getId() : null)
+            .email(user != null ? user.getEmail() : null)
+            .name(user != null ? user.getName() : null)
+            .role(user != null && user.getRole() != null ? user.getRole().name() : null)
+            .token(token)
+            .expiresIn(86400000L)
+            .tokenType("Bearer")
+            .build();
+    }
+
+    @Named("roleToString")
+    default String roleToString(UserRole role) {
+        return role != null ? role.name() : null;
+    }
 }

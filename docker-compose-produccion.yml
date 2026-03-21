@@ -1,0 +1,153 @@
+version: '3.9'
+
+services:
+  # ============================================
+  # MYSQL DATABASE - PRODUCCIÓN
+  # ============================================
+  mysql-db:
+    image: mysql:8.0
+    container_name: franquicias-mysql-prod
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_HOST: 'localhost'
+    ports:
+      - "127.0.0.1:3306:3306"  # Solo accesible localmente
+    volumes:
+      - mysql_data_prod:/var/lib/mysql
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - franquicias-prod
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+      - --max_connections=1000
+      - --max_allowed_packet=1G
+      - --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+
+  # ============================================
+  # FRANQUICIAS API - PRODUCCIÓN
+  # ============================================
+  franquicias-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      args:
+        JAVA_VERSION: 17
+    image: franquicias-api:${API_VERSION:-1.0.0}
+    container_name: franquicias-api-prod
+    restart: always
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      SERVER_PORT: ${SERVER_PORT:-8080}
+      DB_HOST: mysql-db
+      DB_PORT: ${DB_PORT:-3306}
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USERNAME: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      LOG_LEVEL: ${LOG_LEVEL:-WARN}
+      SPRING_LOG_LEVEL: ${SPRING_LOG_LEVEL:-WARN}
+      SWAGGER_ENABLED: ${SWAGGER_ENABLED:-false}  # Deshabilitado en prod
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      TZ: ${TIMEZONE:-UTC}
+      JAVA_OPTS: "-Xmx1024m -Xms512m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - logs:/app/logs
+    networks:
+      - franquicias-prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+      - NET_RAW
+    cap_add:
+      - NET_BIND_SERVICE
+    user: "1000:1000"  # Ejecutar como usuario no-root
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=franquicias-api,environment=production"
+
+  # ============================================
+  # NGINX REVERSE PROXY (OPCIONAL)
+  # ============================================
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: franquicias-nginx-prod
+    restart: always
+    depends_on:
+      - franquicias-api
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx_cache:/var/cache/nginx
+    networks:
+      - franquicias-prod
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    profiles:
+      - with-nginx
+
+networks:
+  franquicias-prod:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  mysql_data_prod:
+    driver: local
+  logs:
+    driver: local
+  nginx_cache:
+    driver: local

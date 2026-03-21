@@ -79,4 +79,13 @@ public interface FranchiseRepository {
      * @return {@code Flux} emitiendo todas las franquicias propiedad del usuario especificado
      */
     Flux<Franchise> findByCreatedBy(Long createdBy, Pageable pageable);
+
+    /**
+     * Busca una franquicia por su nombre exacto.
+     * Retorna la primera franquicia activa (no eliminada) que coincida.
+     *
+     * @param name el nombre de la franquicia a buscar
+     * @return {@code Mono} conteniendo la franquicia si se encuentra, vacío en caso contrario
+     */
+    Mono<Franchise> findByName(String name);
 }

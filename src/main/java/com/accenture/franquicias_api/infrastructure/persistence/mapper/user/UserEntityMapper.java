@@ -1,6 +1,7 @@
 package com.accenture.franquicias_api.infrastructure.persistence.mapper.user;
 
 import com.accenture.franquicias_api.domain.entity.user.User;
+import com.accenture.franquicias_api.domain.enums.UserRole;
 import com.accenture.franquicias_api.infrastructure.persistence.entity.user.UserEntity;
 import org.mapstruct.Mapper;
 
@@ -41,4 +42,29 @@ public interface UserEntityMapper {
      * @return la entidad R2DBC de persistencia con los mismos datos
      */
     UserEntity toEntity(User domain);
+
+    /**
+     * Método manual que convierte UserEntity a User asegurando todos los campos.
+     * Necesario porque User hereda de BaseEntity y MapStruct puede no manejar herencia correctamente.
+     *
+     * @param entity la entidad de persistencia
+     * @return la entidad de dominio completamente mapeada
+     */
+    default User toDomainManual(UserEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        
+        User user = new User();
+        user.setId(entity.getId());
+        user.setEmail(entity.getEmail());
+        user.setPassword(entity.getPassword());
+        user.setName(entity.getName());
+        user.setRole(UserRole.valueOf(entity.getRole().name()));
+        user.setActive(entity.getActive());
+        user.setCreatedAt(entity.getCreatedAt());
+        user.setUpdatedAt(entity.getUpdatedAt());
+        user.setDeletedAt(entity.getDeletedAt());
+        return user;
+    }
 }

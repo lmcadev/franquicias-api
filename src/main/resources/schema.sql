@@ -1,13 +1,10 @@
 -- SCHEMA SQL PARA FRANQUICIAS API - MySQL 8.0+
--- Nota: Comentado para evitar errores del validador dbtools
--- La sintaxis es válida en MySQL y se ejecutará correctamente en la BD
 
-/*
 -- ============================================
 -- Tabla de Usuarios (para JWT Authentication)
 -- ============================================
 CREATE TABLE IF NOT EXISTS users (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     name VARCHAR(100) NOT NULL,
@@ -24,7 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Tabla de Franquicias
 -- ============================================
 CREATE TABLE IF NOT EXISTS franchises (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     created_by BIGINT NOT NULL,
@@ -32,6 +29,7 @@ CREATE TABLE IF NOT EXISTS franchises (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
     FOREIGN KEY (created_by) REFERENCES users(id),
+    UNIQUE KEY uk_franchise_name (name),
     INDEX idx_name (name),
     INDEX idx_created_at (created_at),
     INDEX idx_deleted_at (deleted_at)
@@ -41,7 +39,7 @@ CREATE TABLE IF NOT EXISTS franchises (
 -- Tabla de Sucursales
 -- ============================================
 CREATE TABLE IF NOT EXISTS branches (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     franchise_id BIGINT NOT NULL,
     name VARCHAR(100) NOT NULL,
     address VARCHAR(255),
@@ -59,7 +57,7 @@ CREATE TABLE IF NOT EXISTS branches (
 -- Tabla de Productos
 -- ============================================
 CREATE TABLE IF NOT EXISTS products (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     branch_id BIGINT NOT NULL,
     name VARCHAR(100) NOT NULL,
     description TEXT,
@@ -82,12 +80,5 @@ CREATE INDEX idx_franchise_branch ON branches(franchise_id, deleted_at);
 CREATE INDEX idx_branch_product ON products(branch_id, deleted_at);
 CREATE INDEX idx_products_max_stock ON products(branch_id, stock, deleted_at);
 
--- ============================================
--- Insertar usuario admin por defecto
--- ============================================
-INSERT INTO users (email, password, name, role)
-VALUES ('admin@correo.com', '$2a$10$slYQmyNdGzin7olVN3p5.OPST9/PgBkqquzi.Ss7YYUgO7lBBu.qm', 'Admin User', 'ADMIN')
-ON DUPLICATE KEY UPDATE role = 'ADMIN';
-
--- Nota: La contraseña por defecto es: admin123
-*/
+-- Nota: Usuario admin se crea dinámicamente en AdminInitializer.java
+-- basado en JWT_SECRET del entorno para mayor seguridad

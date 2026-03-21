@@ -1,0 +1,55 @@
+# ============================================
+# DOCKERFILE - LOCAL
+# Para desarrollo con recarga en caliente
+# ============================================
+
+FROM maven:3.9-eclipse-temurin-17 as builder
+
+WORKDIR /app
+
+# Copiar archivos de configuración de Maven
+COPY pom.xml .
+COPY .mvn .mvn
+
+# Descargar dependencias (cacheable layer)
+RUN mvn dependency:go-offline -B
+
+# Copiar código fuente
+COPY src ./src
+
+# Compilar
+RUN mvn clean package -DskipTests -q
+
+# ============================================
+# Imagen de ejecución - LOCAL
+# ============================================
+FROM eclipse-temurin:17-jdk-jammy
+
+WORKDIR /app
+
+# Instalar curl para healthcheck
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Variables de entorno por defecto
+ENV SERVER_PORT=8080 \
+    SPRING_PROFILES_ACTIVE=local \
+    LOG_LEVEL=DEBUG
+
+# Copiar JAR desde builder
+COPY --from=builder /app/target/franquicias-*.jar /app/franquicias-api.jar
+
+# Exponer puerto
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# Punto de entrada
+ENTRYPOINT ["java", "-jar", "franquicias-api.jar"]
+
+# Labels para metadatos
+LABEL org.opencontainers.image.title="Franquicias API Local"
+LABEL org.opencontainers.image.version="1.0.0-local"
+LABEL org.opencontainers.image.description="API REST para gestión de franquicias (desarrollo)"
+LABEL org.opencontainers.image.authors="Luis Miguel"

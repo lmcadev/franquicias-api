@@ -55,7 +55,7 @@ public class FranchiseRepositoryImpl implements FranchiseRepository {
     @Override
     public Mono<Franchise> findById(Long id) {
         return r2dbcRepository.findByIdAndNotDeleted(id)
-            .map(mapper::toDomain);
+            .map(mapper::toDomainManual);
     }
 
     /**
@@ -70,7 +70,7 @@ public class FranchiseRepositoryImpl implements FranchiseRepository {
         int limit = pageable.getPageSize();
         int offset = pageable.getPageNumber() * pageable.getPageSize();
         return r2dbcRepository.findAllNotDeleted(limit, offset)
-            .map(mapper::toDomain);
+            .map(mapper::toDomainManual);
     }
 
     /**
@@ -137,6 +137,19 @@ public class FranchiseRepositoryImpl implements FranchiseRepository {
         return r2dbcRepository.findByCreatedByAndNotDeleted(createdBy)
             .skip((long) pageable.getPageNumber() * pageable.getPageSize())
             .take(pageable.getPageSize())
-            .map(mapper::toDomain);
+            .map(mapper::toDomainManual);
+    }
+
+    /**
+     * Busca una franquicia por su nombre.
+     * Retorna la primera franquicia activa que coincida con el nombre.
+     *
+     * @param name el nombre de la franquicia a buscar
+     * @return {@code Mono} conteniendo la franquicia si se encuentra
+     */
+    @Override
+    public Mono<Franchise> findByName(String name) {
+        return r2dbcRepository.findByNameAndNotDeleted(name)
+            .map(mapper::toDomainManual);
     }
 }

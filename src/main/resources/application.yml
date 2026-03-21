@@ -2,6 +2,10 @@ spring:
   application:
     name: franquicias-api
 
+  # Perfiles activos (puede ser sobrescrito por variable de entorno SPRING_PROFILES_ACTIVE)
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
   # Configuración de R2DBC (Reactive Database Connectivity)
   r2dbc:
     url: r2dbc:mysql://localhost:3306/franquicias_db
@@ -56,5 +60,5 @@ springdoc:
 
 # Configuración de JWT
 jwt:
-  secret: ${JWT_SECRET:57990c74629e1fa30a55a37ee8fcd0ae39991e4fdf3271f227d6d2bfb5f75c29d}
+  secret: ${JWT_SECRET}
   expiration: 86400000  # 24 horas en milisegundos

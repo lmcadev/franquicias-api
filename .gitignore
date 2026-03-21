@@ -44,10 +44,37 @@ logs/
 .env
 .env.local
 .env.*.local
+.env.prod
 
 # OS
 Thumbs.db
 .AppleDouble
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Logs & temps
+tmp/
+temp/
+*.bak
+*.tmp
+
+# Security & Secrets
+*.key
+*.pem
+*.pfx
+*.p12
+*.crt
+*.cer
+ssl/
+secrets/
+.ssl/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
 .LSOverride
 
 # Project specific

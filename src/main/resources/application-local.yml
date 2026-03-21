@@ -1,0 +1,150 @@
+# Configuración de la aplicación para ambiente LOCAL (desarrollo)
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: franquicias-api
+
+  # ============================================================================
+  # DATASOURCE - R2DBC (Reactive Driver para MySQL)
+  # ============================================================================
+  r2dbc:
+    url: r2dbc:mysql://${DB_HOST:mysql-db}:${DB_PORT:3306}/${DB_NAME:franquicias_db}?sslMode=DISABLED
+    username: ${DB_USERNAME:franquicias_user}
+    password: ${DB_PASSWORD:franquicias_pass_2024}
+    pool:
+      initial-size: 5
+      max-size: 10
+      validation-query: SELECT 1
+      max-idle-time: 30m
+    properties:
+      serverZoneId: ${TIMEZONE:America/Bogota}
+      useServerPreparedStatements: true
+
+  # ============================================================================
+  # ENVIRONMENT
+  # ============================================================================
+  # spring.profiles.active está en application.yml (recurso principal)
+
+  # ============================================================================
+  # JPA/HIBERNATE
+  # ============================================================================
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+  # ============================================================================
+  # JACKSON
+  # ============================================================================
+  jackson:
+    serialization:
+      indent-output: true
+    deserialization:
+      fail-on-unknown-properties: false
+  
+  # ============================================================================
+  # LOGGING
+  # ============================================================================
+  logging:
+    level:
+      root: ${LOG_LEVEL:DEBUG}
+      org.springframework.web: DEBUG
+      org.springframework.security: DEBUG
+      com.accenture.franquicias_api: DEBUG
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    pattern:
+      console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+      file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# ============================================================================
+# SPRINGDOC - OpenAPI 3.1 / Swagger
+# ============================================================================
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  apiinfo:
+    title: Franquicias API
+    version: 1.0.0
+    description: API REST para gestión de franquicias, sucursales y productos
+    contact:
+      name: Accenture
+      email: support@accenture.com
+    license:
+      name: Apache 2.0
+
+# ============================================================================
+# ACTUATOR - Health & Metrics
+# ============================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    env:
+      enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+
+# ============================================================================
+# JWT (JsonWebToken)
+# ============================================================================
+jwt:
+  secret: ${JWT_SECRET:57990c74629e1fa30a55a37ee8fcd0ae39991e4fdf3271f227d6d2bfb5f75c29d}
+  expiration: ${JWT_EXPIRATION:3600000}
+
+# ============================================================================
+# CORS (Cross-Origin Resource Sharing)
+# ============================================================================
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:*}
+  allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS,PATCH}
+  allowed-headers: ${CORS_ALLOWED_HEADERS:*}
+  allow-credentials: true
+  max-age: 3600
+
+# ============================================================================
+# API CONFIGURATION
+# ============================================================================
+api:
+  title: ${API_TITLE:Franquicias API}
+  version: ${API_VERSION:1.0.0}
+  description: ${API_DESCRIPTION:Gestión de franquicias, sucursales y productos}
+  base-path: /api/v1
+
+# ============================================================================
+# TIMEZONE
+# ============================================================================
+timezone: ${TIMEZONE:America/Bogota}
+
+# ============================================================================
+# ENVIRONMENT
+# ============================================================================
+environment: ${ENVIRONMENT:local}

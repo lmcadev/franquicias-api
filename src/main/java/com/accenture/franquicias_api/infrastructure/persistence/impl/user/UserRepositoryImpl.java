@@ -56,7 +56,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Mono<User> findById(Long id) {
         return r2dbcRepository.findByIdAndNotDeleted(id)
-            .map(mapper::toDomain);
+            .map(mapper::toDomainManual);
     }
 
     /**
@@ -69,7 +69,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Mono<User> findByEmail(String email) {
         return r2dbcRepository.findByEmailAndNotDeleted(email)
-            .map(mapper::toDomain);
+            .map(mapper::toDomainManual);
     }
 
     /**
@@ -103,7 +103,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
         entity.setUpdatedAt(LocalDateTime.now());
         return r2dbcRepository.save(entity)
-            .map(mapper::toDomain);
+            .map(mapper::toDomainManual);
     }
 
     /**
@@ -136,6 +136,6 @@ public class UserRepositoryImpl implements UserRepository {
         UserEntity entity = mapper.toEntity(user);
         entity.setUpdatedAt(LocalDateTime.now());
         return r2dbcRepository.save(entity)
-            .map(mapper::toDomain);
+            .map(mapper::toDomainManual);
     }
 }

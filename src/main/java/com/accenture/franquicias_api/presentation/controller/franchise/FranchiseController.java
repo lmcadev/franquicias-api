@@ -8,6 +8,7 @@ import com.accenture.franquicias_api.application.usecase.franchise.DeleteFranchi
 import com.accenture.franquicias_api.application.usecase.franchise.GetAllFranchisesUseCase;
 import com.accenture.franquicias_api.application.usecase.franchise.GetFranchiseByIdUseCase;
 import com.accenture.franquicias_api.application.usecase.franchise.UpdateFranchiseUseCase;
+import com.accenture.franquicias_api.presentation.exception.UnauthorizedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,7 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,8 +76,8 @@ public class FranchiseController {
     })
     public Mono<ResponseEntity<FranchiseResponse>> create(
             @Valid @RequestBody FranchiseCreateRequest request) {
-        Long userId = getUserIdFromSecurityContext();
-        return createFranchiseUseCase.execute(request, userId)
+        return getUserIdFromSecurityContext()
+            .flatMap(userId -> createFranchiseUseCase.execute(request, userId))
             .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response));
     }
     
@@ -185,16 +186,15 @@ public class FranchiseController {
     
     /**
      * Extrae el userId del SecurityContext.
-     * Lanza exception si no está autenticado.
+     * Lanza UnauthorizedException si no está autenticado.
      */
-    private Long getUserIdFromSecurityContext() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            Object details = authentication.getDetails();
-            if (details instanceof Long) {
-                return (Long) details;
-            }
-        }
-        throw new IllegalStateException("Usuario no autenticado o userId no encontrado");
+    private Mono<Long> getUserIdFromSecurityContext() {
+        return ReactiveSecurityContextHolder.getContext()
+            .map(securityContext -> securityContext.getAuthentication())
+            .filter(authentication -> authentication != null && authentication.isAuthenticated())
+            .map(Authentication::getDetails)
+            .filter(details -> details instanceof Long)
+            .cast(Long.class)
+            .switchIfEmpty(Mono.error(new UnauthorizedException("Usuario no autenticado o userId no encontrado")));
     }
 }
