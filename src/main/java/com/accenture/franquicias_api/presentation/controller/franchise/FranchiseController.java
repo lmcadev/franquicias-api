@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,8 +50,7 @@ public class FranchiseController {
     @PostMapping
     public Mono<ResponseEntity<FranchiseResponse>> create(
             @Valid @RequestBody FranchiseCreateRequest request) {
-        // TODO: Obtener userId del JWT
-        Long userId = 1L;
+        Long userId = getUserIdFromSecurityContext();
         return createFranchiseUseCase.execute(request, userId)
             .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response));
     }
@@ -96,5 +97,20 @@ public class FranchiseController {
     public Mono<ResponseEntity<Void>> delete(@PathVariable Long id) {
         return deleteFranchiseUseCase.execute(id)
             .map(v -> ResponseEntity.noContent().<Void>build());
+    }
+    
+    /**
+     * Extrae el userId del SecurityContext.
+     * Lanza exception si no está autenticado.
+     */
+    private Long getUserIdFromSecurityContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object details = authentication.getDetails();
+            if (details instanceof Long) {
+                return (Long) details;
+            }
+        }
+        throw new IllegalStateException("Usuario no autenticado o userId no encontrado");
     }
 }
