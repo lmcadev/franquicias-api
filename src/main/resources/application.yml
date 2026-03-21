@@ -2,7 +2,7 @@ spring:
   application:
     name: franquicias-api
 
-  # Configuración de R2DBC
+  # Configuración de R2DBC (Reactive Database Connectivity)
   r2dbc:
     url: r2dbc:mysql://localhost:3306/franquicias_db
     username: root
@@ -13,7 +13,7 @@ spring:
       max-idle-time: 30m
       validation-query: SELECT 1
 
-  # JPA Configuration 
+  # JPA Configuration (aunque usamos R2DBC, evita conflictos)
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
@@ -22,6 +22,8 @@ spring:
 
   # Jackson Configuration
   jackson:
+    serialization:
+      write-dates-as-timestamps: false
     default-property-inclusion: non_null
 
   # Security
@@ -58,4 +60,4 @@ springdoc:
 # Configuración de JWT
 jwt:
   secret: ${JWT_SECRET:57990c74629e1fa30a55a37ee8fcd0ae39991e4fdf3271f227d6d2bfb5f75c29d}
-  expiration: 86400000  # 24 horas 
+  expiration: 86400000  # 24 horas en milisegundos
