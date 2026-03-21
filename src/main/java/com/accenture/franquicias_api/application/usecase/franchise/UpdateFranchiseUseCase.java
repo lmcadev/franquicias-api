@@ -11,7 +11,28 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para actualizar una franquicia existente
+ * Caso de uso para actualizar una franquicia existente.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Valida el nombre actualizado</li>
+ *   <li>Verifica que la franquicia existe</li>
+ *   <li>Convierte el DTO de solicitud a entidad de dominio</li>
+ *   <li>Persiste los cambios en la base de datos</li>
+ *   <li>Retorna la respuesta con datos actualizados</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si la franquicia no existe</li>
+ * </ul>
+ * </p>
+ *
+ * @see FranchiseUpdateRequest
+ * @see FranchiseResponse
  */
 @Component
 @RequiredArgsConstructor

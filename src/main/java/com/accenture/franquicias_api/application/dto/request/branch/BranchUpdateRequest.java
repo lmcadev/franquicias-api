@@ -10,7 +10,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO para actualizar una sucursal
+ * DTO para solicitudes de actualización de sucursales existentes.
+ *
+ * <p>
+ * Utilizado en el endpoint PUT /api/branches/{id} para actualizar los datos
+ * de una sucursal existente.
+ * </p>
+ *
+ * <p>
+ * Validaciones:
+ * <ul>
+ *   <li>Nombre: requerido, máximo 100 caracteres</li>
+ *   <li>Dirección: opcional</li>
+ *   <li>Ciudad: opcional</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Respuesta esperada: {@link BranchResponse}
+ * </p>
+ *
+ * @see BranchResponse
+ * @see com.accenture.franquicias_api.application.usecase.branch.UpdateBranchUseCase
  */
 @Data
 @Builder

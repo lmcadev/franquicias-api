@@ -10,7 +10,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO para actualizar una franquicia
+ * DTO para solicitudes de actualización de franquicias existentes.
+ *
+ * <p>
+ * Utilizado en el endpoint PUT /api/franchises/{id} para actualizar los datos
+ * de una franquicia existente.
+ * </p>
+ *
+ * <p>
+ * Validaciones:
+ * <ul>
+ *   <li>Nombre: requerido, máximo 100 caracteres</li>
+ *   <li>Descripción: opcional</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Respuesta esperada: {@link FranchiseResponse}
+ * </p>
+ *
+ * @see FranchiseResponse
+ * @see com.accenture.franquicias_api.application.usecase.franchise.UpdateFranchiseUseCase
  */
 @Data
 @Builder

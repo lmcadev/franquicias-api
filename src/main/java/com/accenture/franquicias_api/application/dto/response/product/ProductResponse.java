@@ -10,7 +10,33 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * DTO para respuesta de producto
+ * DTO para respuestas de detalles de producto en operaciones CRUD.
+ *
+ * <p>
+ * Contiene toda la información asociada a un producto incluyendo metadata
+ * de auditoría. Se utiliza en respuestas de endpoints:
+ * POST /api/branches/{branchId}/products, PUT /api/products/{id}/name,
+ * PATCH /api/products/{id}/stock, GET /api/branches/{branchId}/products
+ * </p>
+ *
+ * <p>
+ * Campos incluidos:
+ * <ul>
+ *   <li>id: Identificador único del producto</li>
+ *   <li>branch_id: ID de la sucursal a la que pertenece</li>
+ *   <li>name: Nombre del producto</li>
+ *   <li>description: Descripción del producto</li>
+ *   <li>stock: Cantidad de stock disponible</li>
+ *   <li>price: Precio unitario del producto</li>
+ *   <li>created_at: Timestamp de creación</li>
+ *   <li>updated_at: Timestamp de última actualización</li>
+ *   <li>deleted_at: Timestamp de eliminación (null si activo)</li>
+ * </ul>
+ * </p>
+ *
+ * @see ProductCreateRequest
+ * @see ProductUpdateNameRequest
+ * @see ProductStockUpdateRequest
  */
 @Data
 @Builder

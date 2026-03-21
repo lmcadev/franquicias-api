@@ -4,7 +4,30 @@ import com.accenture.franquicias_api.presentation.exception.InvalidInputExceptio
 import java.util.regex.Pattern;
 
 /**
- * Clase utilitaria para validaciones comunes
+ * Utilidad de validaciones para campos de entrada comunes en la API.
+ *
+ * <p>
+ * Proporciona métodos estáticos para validar:
+ * <ul>
+ *   <li>Nombres: no vacíos, máximo 100 caracteres</li>
+ *   <li>Emails: formato válido según patrón regex</li>
+ *   <li>Contraseñas: longitud mínima de 8 caracteres</li>
+ *   <li>Stock: no negativo (>= 0)</li>
+ *   <li>Paginación: página >= 0, tamaño entre 1 y 100</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza {@link InvalidInputException} con detalles del campo si la validación falla.
+ * </p>
+ *
+ * <p>
+ * Ejemplo:
+ * <pre>
+ * ValidationUtils.validateEmail(request.getEmail());
+ * ValidationUtils.validatePassword(request.getPassword());
+ * </pre>
+ * </p>
  */
 public class ValidationUtils {
 

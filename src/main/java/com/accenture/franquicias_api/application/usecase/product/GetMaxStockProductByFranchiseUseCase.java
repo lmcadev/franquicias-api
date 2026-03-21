@@ -10,7 +10,26 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para obtener el producto con mayor stock en una franquicia
+ * Caso de uso para obtener el producto con máximo stock en una franquicia.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Verifica que la franquicia existe</li>
+ *   <li>Busca el producto con mayor stock en todas las sucursales</li>
+ *   <li>Enriquece la respuesta con datos de la franquicia y sucursal</li>
+ *   <li>Convierte a DTO de respuesta especializada</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si la franquicia no existe o no hay productos</li>
+ * </ul>
+ * </p>
+ *
+ * @see ProductResponse
  */
 @Component
 @RequiredArgsConstructor

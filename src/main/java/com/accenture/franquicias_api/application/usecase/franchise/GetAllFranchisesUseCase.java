@@ -10,7 +10,19 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 /**
- * UseCase para obtener todas las franquicias con paginación
+ * Caso de uso para obtener todas las franquicias con paginación.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Recupera todas las franquicias activas (no eliminadas)</li>
+ *   <li>Aplica paginación según parámetros</li>
+ *   <li>Convierte las entidades a DTOs de respuesta</li>
+ * </ul>
+ * </p>
+ *
+ * @see FranchiseResponse
+ * @see Pageable
  */
 @Component
 @RequiredArgsConstructor

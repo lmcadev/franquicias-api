@@ -13,7 +13,30 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para crear una nueva sucursal
+ * Caso de uso para crear una nueva sucursal dentro de una franquicia.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Valida el nombre de la sucursal</li>
+ *   <li>Verifica que la franquicia padre existe</li>
+ *   <li>Convierte el DTO de solicitud a entidad de dominio</li>
+ *   <li>Asigna el ID de la franquicia a la sucursal</li>
+ *   <li>Persiste la sucursal en la base de datos</li>
+ *   <li>Retorna la respuesta con datos de la sucursal creada</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si la franquicia no existe</li>
+ * </ul>
+ * </p>
+ *
+ * @see BranchCreateRequest
+ * @see BranchResponse
+ * @see Branch
  */
 @Component
 @RequiredArgsConstructor

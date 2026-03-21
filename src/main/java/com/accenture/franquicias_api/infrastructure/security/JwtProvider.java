@@ -13,8 +13,30 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 /**
- * Componente para generar y validar tokens JWT.
- * Utiliza JJWT (io.jsonwebtoken) para operaciones criptográficas.
+ * Proveedor de tokens JWT para autenticación de usuarios.
+ *
+ * <p>
+ * Responsable de:
+ * <ul>
+ *   <li>Generar tokens JWT firmados con HS256</li>
+ *   <li>Validar tokens JWT en requests</li>
+ *   <li>Extraer claims (userId, email) de tokens válidos</li>
+ *   <li>Manejo de expiración (configurable en propiedades)</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Configuración requerida en application.yml:
+ * <pre>
+ * jwt:
+ *   secret: clave-secreta-muy-larga-minimo-256-bits
+ *   expiration: 3600000  # 1 hora en ms
+ * </pre>
+ * </p>
+ *
+ * <p>
+ * Utiliza JJWT 0.11+ para operaciones criptográficas con HMAC-SHA256.
+ * </p>
  */
 @Slf4j
 @Component

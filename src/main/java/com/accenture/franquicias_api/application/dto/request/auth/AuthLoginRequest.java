@@ -10,7 +10,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO para el login de usuarios
+ * DTO para solicitudes de inicio de sesión de usuarios.
+ *
+ * <p>
+ * Utilizado en el endpoint POST /api/auth/login para autenticar usuarios
+ * proporcionando sus credenciales (email y contraseña).
+ * </p>
+ *
+ * <p>
+ * Validaciones:
+ * <ul>
+ *   <li>Email: requerido, debe ser válido</li>
+ *   <li>Contraseña: requerida, mínimo 8 caracteres</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Respuesta esperada: {@link AuthTokenResponse} con JWT token
+ * </p>
+ *
+ * @see AuthTokenResponse
+ * @see com.accenture.franquicias_api.application.usecase.auth.LoginUseCase
  */
 @Data
 @Builder

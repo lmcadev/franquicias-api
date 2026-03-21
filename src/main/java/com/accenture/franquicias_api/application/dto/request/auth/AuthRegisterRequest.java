@@ -11,7 +11,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO para el registro de nuevos usuarios
+ * DTO para solicitudes de registro de nuevos usuarios.
+ *
+ * <p>
+ * Utilizado en el endpoint POST /api/auth/register para crear nuevos usuarios
+ * en el sistema con rol USER y estado activo.
+ * </p>
+ *
+ * <p>
+ * Validaciones:
+ * <ul>
+ *   <li>Email: requerido, debe ser válido y único</li>
+ *   <li>Contraseña: requerida, mínimo 8 caracteres</li>
+ *   <li>Nombre: requerido, máximo 100 caracteres</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Respuesta esperada: {@link AuthTokenResponse} con JWT token para el nuevo usuario
+ * </p>
+ *
+ * @see AuthTokenResponse
+ * @see com.accenture.franquicias_api.application.usecase.auth.RegisterUseCase
  */
 @Data
 @Builder

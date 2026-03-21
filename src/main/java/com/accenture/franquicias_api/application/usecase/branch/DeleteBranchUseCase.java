@@ -7,7 +7,24 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para eliminar (soft delete) una sucursal
+ * Caso de uso para eliminar una sucursal.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Busca la sucursal a eliminar</li>
+ *   <li>Implementa eliminación suave (soft delete)</li>
+ *   <li>Establece el timestamp deleted_at sin eliminar físicamente</li>
+ *   <li>Retorna confirmación de eliminación</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si la sucursal no existe</li>
+ * </ul>
+ * </p>
  */
 @Component
 @RequiredArgsConstructor

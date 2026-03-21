@@ -12,7 +12,30 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO para crear un nuevo producto
+ * DTO para solicitudes de creación de nuevos productos.
+ *
+ * <p>
+ * Utilizado en el endpoint POST /api/branches/{branchId}/products para crear
+ * un nuevo producto dentro de una sucursal existente.
+ * </p>
+ *
+ * <p>
+ * Validaciones:
+ * <ul>
+ *   <li>Nombre: requerido, máximo 100 caracteres</li>
+ *   <li>Descripción: opcional</li>
+ *   <li>Stock: requerido, mínimo 0</li>
+ *   <li>Precio: opcional, debe ser > 0</li>
+ *   <li>Sucursal padre: debe existir y estar activa</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Respuesta esperada: {@link ProductResponse}
+ * </p>
+ *
+ * @see ProductResponse
+ * @see com.accenture.franquicias_api.application.usecase.product.AddProductUseCase
  */
 @Data
 @Builder

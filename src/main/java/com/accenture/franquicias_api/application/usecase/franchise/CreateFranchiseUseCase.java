@@ -11,7 +11,26 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para crear una nueva franquicia
+ * Caso de uso para crear una nueva franquicia.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Valida el nombre de la franquicia</li>
+ *   <li>Convierte el DTO de solicitud a entidad de dominio</li>
+ *   <li>Asigna el usuario creador (owner) de la franquicia</li>
+ *   <li>Persiste la franquicia en la base de datos</li>
+ *   <li>Retorna la respuesta con datos de la franquicia creada</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Solo usuarios autenticados pueden crear franquicias.
+ * </p>
+ *
+ * @see FranchiseCreateRequest
+ * @see FranchiseResponse
+ * @see Franchise
  */
 @Component
 @RequiredArgsConstructor

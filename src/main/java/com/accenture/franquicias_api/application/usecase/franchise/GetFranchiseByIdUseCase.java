@@ -9,7 +9,25 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para obtener una franquicia por ID
+ * Caso de uso para obtener una franquicia por su ID.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Busca la franquicia en la base de datos</li>
+ *   <li>Filtra registros eliminados suavemente</li>
+ *   <li>Convierte la entidad a DTO de respuesta</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si la franquicia no existe o está eliminada</li>
+ * </ul>
+ * </p>
+ *
+ * @see FranchiseResponse
  */
 @Component
 @RequiredArgsConstructor

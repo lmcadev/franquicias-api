@@ -10,7 +10,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO para crear una nueva sucursal
+ * DTO para solicitudes de creación de nuevas sucursales.
+ *
+ * <p>
+ * Utilizado en el endpoint POST /api/franchises/{franchiseId}/branches para crear
+ * una nueva sucursal dentro de una franquicia existente.
+ * </p>
+ *
+ * <p>
+ * Validaciones:
+ * <ul>
+ *   <li>Nombre: requerido, máximo 100 caracteres</li>
+ *   <li>Dirección: opcional</li>
+ *   <li>Ciudad: opcional</li>
+ *   <li>Franquicia padre: debe existir y estar activa</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Respuesta esperada: {@link BranchResponse}
+ * </p>
+ *
+ * @see BranchResponse
+ * @see com.accenture.franquicias_api.application.usecase.branch.CreateBranchUseCase
  */
 @Data
 @Builder

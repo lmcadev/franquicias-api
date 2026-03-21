@@ -13,7 +13,30 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para login de usuarios
+ * Caso de uso para autenticación de usuarios con email y contraseña.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Valida el formato del email y contraseña</li>
+ *   <li>Busca al usuario por email en la base de datos</li>
+ *   <li>Verifica que la contraseña sea correcta (encriptada)</li>
+ *   <li>Valida que el usuario esté activo</li>
+ *   <li>Genera un token JWT válido por 24 horas</li>
+ *   <li>Retorna la respuesta con el token Bearer</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link UnauthorizedException} si email/contraseña son inválidos o usuario inactivo</li>
+ * </ul>
+ * </p>
+ *
+ * @see AuthLoginRequest
+ * @see AuthTokenResponse
+ * @see JwtProvider
  */
 @Component
 @RequiredArgsConstructor

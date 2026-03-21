@@ -15,7 +15,29 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para registrar nuevos usuarios
+ * Caso de uso para registro de nuevos usuarios.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Valida el formato del email y contraseña</li>
+ *   <li>Verifica que el email no esté ya registrado</li>
+ *   <li>Crea un nuevo usuario con rol USER</li>
+ *   <li>Encripta la contraseña usando BCrypt</li>
+ *   <li>Marca el usuario como activo</li>
+ *   <li>Persiste el usuario en la base de datos</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ConflictException} si el email ya existe en el sistema</li>
+ * </ul>
+ * </p>
+ *
+ * @see AuthRegisterRequest
+ * @see AuthTokenResponse
  */
 @Component
 @RequiredArgsConstructor
