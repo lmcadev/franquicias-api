@@ -11,8 +11,23 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 /**
- * Filtro web para extraer y validar el token JWT de los headers.
- * Establece el contexto de seguridad si el token es válido.
+ * Filtro web reactivo para autenticación JWT en Spring WebFlux.
+ *
+ * <p>
+ * En cada request HTTP:
+ * <ul>
+ *   <li>Extrae el token JWT del header Authorization (Bearer <token>)</li>
+ *   <li>Valida el token usando {@link JwtProvider}</li>
+ *   <li>Extrae userId y email del token válido</li>
+ *   <li>Configura el contexto de seguridad (SecurityContext)</li>
+ *   <li>Permite que el request continúe en la cadena de filtros</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Si el token es inválido o no existe, el request continúa sin autenticación
+ * (será rechazado por SecurityConfig en rutas protegidas).
+ * </p>
  */
 @Slf4j
 @Component

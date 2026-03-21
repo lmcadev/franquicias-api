@@ -7,7 +7,24 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para eliminar (soft delete) un producto
+ * Caso de uso para eliminar un producto.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Busca el producto a eliminar</li>
+ *   <li>Implementa eliminación suave (soft delete)</li>
+ *   <li>Establece el timestamp deleted_at sin eliminar físicamente</li>
+ *   <li>Retorna confirmación de eliminación</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si el producto no existe</li>
+ * </ul>
+ * </p>
  */
 @Component
 @RequiredArgsConstructor

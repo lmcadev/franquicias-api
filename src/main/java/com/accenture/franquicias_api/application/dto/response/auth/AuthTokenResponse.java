@@ -8,7 +8,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO para las respuestas de autenticación (token)
+ * DTO para respuestas de autenticación con JWT token.
+ *
+ * <p>
+ * Utilizado en los endpoints POST /api/auth/login y POST /api/auth/register
+ * para retornar información de autenticación y autorización del usuario.
+ * </p>
+ *
+ * <p>
+ * Campos incluidos:
+ * <ul>
+ *   <li>token: JWT Bearer token para autenticación en headers</li>
+ *   <li>token_type: Tipo de token (siempre "Bearer")</li>
+ *   <li>expires_in: Segundos hasta expiración (3600 = 1 hora)</li>
+ *   <li>user_id: ID del usuario autenticado</li>
+ *   <li>email: Email del usuario autenticado</li>
+ *   <li>name: Nombre completo del usuario</li>
+ *   <li>role: Rol del usuario (ADMIN, USER, MANAGER)</li>
+ * </ul>
+ * </p>
+ *
+ * @see com.accenture.franquicias_api.application.dto.request.auth.AuthLoginRequest
+ * @see com.accenture.franquicias_api.application.dto.request.auth.AuthRegisterRequest
  */
 @Data
 @Builder

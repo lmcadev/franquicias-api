@@ -10,7 +10,31 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * DTO para respuesta de sucursal
+ * DTO para respuestas de detalles de sucursal en operaciones CRUD.
+ *
+ * <p>
+ * Contiene toda la información asociada a una sucursal incluyendo metadata
+ * de auditoría. Se utiliza en respuestas de endpoints:
+ * POST /api/franchises/{franchiseId}/branches, PUT /api/branches/{id},
+ * GET /api/franchises/{franchiseId}/branches
+ * </p>
+ *
+ * <p>
+ * Campos incluidos:
+ * <ul>
+ *   <li>id: Identificador único de la sucursal</li>
+ *   <li>franchise_id: ID de la franquicia padre</li>
+ *   <li>name: Nombre de la sucursal</li>
+ *   <li>address: Dirección física de la sucursal</li>
+ *   <li>city: Ciudad donde está ubicada</li>
+ *   <li>created_at: Timestamp de creación</li>
+ *   <li>updated_at: Timestamp de última actualización</li>
+ *   <li>deleted_at: Timestamp de eliminación (null si activa)</li>
+ * </ul>
+ * </p>
+ *
+ * @see BranchCreateRequest
+ * @see BranchUpdateRequest
  */
 @Data
 @Builder

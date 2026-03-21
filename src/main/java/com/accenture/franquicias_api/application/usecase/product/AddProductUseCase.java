@@ -13,7 +13,30 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para agregar un nuevo producto a una sucursal
+ * Caso de uso para agregar un nuevo producto a una sucursal.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Valida el nombre, stock y precio del producto</li>
+ *   <li>Verifica que la sucursal padre existe</li>
+ *   <li>Convierte el DTO de solicitud a entidad de dominio</li>
+ *   <li>Asigna el ID de la sucursal al producto</li>
+ *   <li>Persiste el producto en la base de datos</li>
+ *   <li>Retorna la respuesta con datos del producto creado</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si la sucursal no existe</li>
+ * </ul>
+ * </p>
+ *
+ * @see ProductCreateRequest
+ * @see ProductResponse
+ * @see Product
  */
 @Component
 @RequiredArgsConstructor

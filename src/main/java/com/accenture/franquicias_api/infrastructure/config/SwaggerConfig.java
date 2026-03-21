@@ -12,8 +12,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuración de Swagger/OpenAPI 3.1 para la API de Franquicias
- * Proporciona información detallada de la API, autenticación JWT y documentación de endpoints
+ * Configuración de Swagger/OpenAPI 3.1 para la API de Franquicias.
+ *
+ * <p>
+ * Define la información y seguridad de la documentación automática de la API:
+ * <ul>
+ *   <li>Título, descripción y versión de la API</li>
+ *   <li>Información de contacto y licencia</li>
+ *   <li>Esquema de seguridad JWT en headers Authorization</li>
+ *   <li>Generación automática de DocumentObjectModel (OpenAPI bean)</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Accesible en:
+ * <ul>
+ *   <li>Swagger UI: http://localhost:8080/swagger-ui.html</li>
+ *   <li>JSON OpenAPI: http://localhost:8080/v3/api-docs</li>
+ * </ul>
+ * </p>
+ *
+ * @see org.springdoc.openapi.starter.webflux.api.OpenApiWebfluxResource
  */
 @Configuration
 @SecurityScheme(

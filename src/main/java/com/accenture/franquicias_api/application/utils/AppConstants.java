@@ -1,7 +1,26 @@
 package com.accenture.franquicias_api.application.utils;
 
 /**
- * Constantes de la aplicación
+ * Constantes globales de la aplicación para validaciones y configuración.
+ *
+ * <p>
+ * Centraliza todos los valores constantes utilizados para:
+ * <ul>
+ *   <li>Validaciones de entrada (longitud mínima/máxima, rangos)</li>
+ *   <li>Mensajes de error personalizados</li>
+ *   <li>Parámetros de paginación por defecto</li>
+ *   <li>Configuración de roles de usuario</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Ejemplo de uso:
+ * <pre>
+ * if (name.length() > AppConstants.NAME_MAX_LENGTH) {
+ *     throw new InvalidInputException("name", AppConstants.NAME_TOO_LONG);
+ * }
+ * </pre>
+ * </p>
  */
 public class AppConstants {
 

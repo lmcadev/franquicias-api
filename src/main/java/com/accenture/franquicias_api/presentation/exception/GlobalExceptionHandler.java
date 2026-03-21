@@ -10,7 +10,33 @@ import org.springframework.web.server.ServerWebExchange;
 import java.time.LocalDateTime;
 
 /**
- * Manejador global de excepciones para la API
+ * Manejador global de excepciones para la API REST.
+ *
+ * <p>
+ * Captura todas las excepciones lanzadas en controladores y las convierte
+ * en respuestas HTTP consistentes:
+ * <ul>
+ *   <li>BusinessException y subclases: Respuesta con status y errorCode específicos</li>
+ *   <li>Excepciones genéricas: 500 Internal Server Error con detalles</li>
+ *   <li>Todas incluyen: timestamp, status, message, path, detalles opcionales</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Ejemplo de respuesta:
+ * <pre>
+ * {
+ *   "timestamp": "2024-01-15T10:30:00",
+ *   "status": 404,
+ *   "errorCode": "RESOURCE_NOT_FOUND",
+ *   "message": "Franquicia no encontrada",
+ *   "path": "/api/franchises/999"
+ * }
+ * </pre>
+ * </p>
+ *
+ * @see BusinessException
+ * @see ErrorResponse
  */
 @Slf4j
 @RestControllerAdvice

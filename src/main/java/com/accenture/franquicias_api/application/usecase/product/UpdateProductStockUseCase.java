@@ -11,7 +11,30 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para actualizar el stock de un producto
+ * Caso de uso para actualizar el stock de un producto.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Valida que el stock sea válido (>= 0)</li>
+ *   <li>Busca el producto en la base de datos</li>
+ *   <li>Verifica que el nuevo stock no sea negativo</li>
+ *   <li>Actualiza solo el stock del producto</li>
+ *   <li>Persiste los cambios</li>
+ *   <li>Retorna la respuesta con datos actualizados</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si el producto no existe</li>
+ *   <li>{@link InvalidInputException} si el stock es inválido</li>
+ * </ul>
+ * </p>
+ *
+ * @see ProductStockUpdateRequest
+ * @see ProductResponse
  */
 @Component
 @RequiredArgsConstructor

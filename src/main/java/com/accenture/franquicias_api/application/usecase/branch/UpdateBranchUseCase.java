@@ -11,7 +11,29 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para actualizar una sucursal existente
+ * Caso de uso para actualizar una sucursal existente.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Valida los datos actualizados</li>
+ *   <li>Verifica que la sucursal existe</li>
+ *   <li>Verifica que la franquicia padre existe</li>
+ *   <li>Convierte el DTO de solicitud a entidad de dominio</li>
+ *   <li>Persiste los cambios en la base de datos</li>
+ *   <li>Retorna la respuesta con datos actualizados</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si la sucursal o franquicia no existen</li>
+ * </ul>
+ * </p>
+ *
+ * @see BranchUpdateRequest
+ * @see BranchResponse
  */
 @Component
 @RequiredArgsConstructor

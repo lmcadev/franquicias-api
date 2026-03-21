@@ -10,7 +10,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO para crear una nueva franquicia
+ * DTO para solicitudes de creación de nuevas franquicias.
+ *
+ * <p>
+ * Utilizado en el endpoint POST /api/franchises para crear una nueva franquicia.
+ * El usuario autenticado será registrado como propietario (createdBy) de la franquicia.
+ * </p>
+ *
+ * <p>
+ * Validaciones:
+ * <ul>
+ *   <li>Nombre: requerido, único, máximo 100 caracteres</li>
+ *   <li>Descripción: opcional</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Respuesta esperada: {@link FranchiseResponse}
+ * </p>
+ *
+ * @see FranchiseResponse
+ * @see com.accenture.franquicias_api.application.usecase.franchise.CreateFranchiseUseCase
  */
 @Data
 @Builder

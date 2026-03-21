@@ -10,7 +10,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO para actualizar el stock de un producto
+ * DTO para solicitudes de actualización del stock de un producto.
+ *
+ * <p>
+ * Utilizado en el endpoint PATCH /api/products/{id}/stock para actualizar
+ * únicamente la cantidad de stock de un producto existente.
+ * </p>
+ *
+ * <p>
+ * Validaciones:
+ * <ul>
+ *   <li>Stock: requerido, mínimo 0 (no puede ser negativo)</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Respuesta esperada: {@link ProductResponse}
+ * </p>
+ *
+ * @see ProductResponse
+ * @see com.accenture.franquicias_api.application.usecase.product.UpdateProductStockUseCase
  */
 @Data
 @Builder

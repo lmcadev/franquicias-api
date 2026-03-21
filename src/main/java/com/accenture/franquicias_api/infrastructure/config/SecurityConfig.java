@@ -14,8 +14,25 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 
 /**
- * Configuración de seguridad para la API.
- * Establece rutas públicas, configura CORS, y registra el SecurityFilter.
+ * Configuración de seguridad para la API con autenticación JWT.
+ *
+ * <p>
+ * Define:
+ * <ul>
+ *   <li>Rutas públicas: /api/auth/register, /api/auth/login, /swagger-ui/**</li>
+ *   <li>Rutas protegidas: Todas las demás requieren token JWT válido</li>
+ *   <li>Filtro de seguridad: SecurityFilter para validar JWT</li>
+ *   <li>CORS: Permitir todas las origins y métodos HTTP</li>
+ *   <li>Sin sesiones: Stateless (CSRF deshabilitado)</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Integra con {@link SecurityFilter} para procesar tokens JWT en cada request.
+ * </p>
+ *
+ * @see SecurityFilter
+ * @see JwtProvider
  */
 @Configuration
 @EnableWebFluxSecurity

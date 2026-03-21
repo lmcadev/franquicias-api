@@ -11,7 +11,28 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para actualizar el nombre de un producto
+ * Caso de uso para actualizar el nombre de un producto.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Valida el nuevo nombre del producto</li>
+ *   <li>Busca el producto en la base de datos</li>
+ *   <li>Actualiza solo el nombre del producto</li>
+ *   <li>Persiste los cambios</li>
+ *   <li>Retorna la respuesta con datos actualizados</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si el producto no existe</li>
+ * </ul>
+ * </p>
+ *
+ * @see ProductUpdateNameRequest
+ * @see ProductResponse
  */
 @Component
 @RequiredArgsConstructor

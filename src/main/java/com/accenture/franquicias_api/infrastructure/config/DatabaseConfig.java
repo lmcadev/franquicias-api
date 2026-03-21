@@ -14,6 +14,26 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.transaction.ReactiveTransactionManager;
 import org.springframework.transaction.reactive.TransactionalOperator;
 
+/**
+ * Configuración de la base de datos con R2DBC (Reactive Relational Database Connectivity).
+ *
+ * <p>
+ * Configura:
+ * <ul>
+ *   <li>R2dbcEntityOperations: Template para operaciones reactivas</li>
+ *   <li>DatabaseClient: Cliente para queries SQL reactivas</li>
+ *   <li>TransactionalOperator: Manejo de transacciones reactivas</li>
+ *   <li>ConnectionFactoryInitializer: Inicialización del esquema desde schema.sql</li>
+ *   <li>Auditoría automática: Gestión de createdAt/updatedAt timestamps</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Permite operaciones no-bloqueantes con MySQL a través de driver R2DBC.
+ * </p>
+ *
+ * @see org.springframework.data.r2dbc.repository.R2dbcRepository
+ */
 @Configuration
 @EnableR2dbcRepositories(basePackages = "com.accenture.franquicias_api.infrastructure.persistence.r2dbc")
 @EnableR2dbcAuditing

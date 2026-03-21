@@ -10,7 +10,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO para actualizar el nombre de un producto
+ * DTO para solicitudes de actualización del nombre de un producto.
+ *
+ * <p>
+ * Utilizado en el endpoint PUT /api/products/{id}/name para actualizar
+ * únicamente el nombre/descripción de un producto existente.
+ * </p>
+ *
+ * <p>
+ * Validaciones:
+ * <ul>
+ *   <li>Nombre: requerido, máximo 100 caracteres</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Respuesta esperada: {@link ProductResponse}
+ * </p>
+ *
+ * @see ProductResponse
+ * @see com.accenture.franquicias_api.application.usecase.product.UpdateProductNameUseCase
  */
 @Data
 @Builder

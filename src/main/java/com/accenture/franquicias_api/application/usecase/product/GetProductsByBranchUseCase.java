@@ -13,7 +13,27 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * UseCase para obtener todos los productos de una sucursal con paginación
+ * Caso de uso para obtener todos los productos de una sucursal con paginación.
+ *
+ * <p>
+ * Realiza las siguientes operaciones:
+ * <ul>
+ *   <li>Verifica que la sucursal existe</li>
+ *   <li>Recupera todos los productos activos de la sucursal</li>
+ *   <li>Aplica paginación según parámetros</li>
+ *   <li>Convierte las entidades a DTOs de respuesta</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Lanza excepciones:
+ * <ul>
+ *   <li>{@link ResourceNotFoundException} si la sucursal no existe</li>
+ * </ul>
+ * </p>
+ *
+ * @see ProductResponse
+ * @see Pageable
  */
 @Component
 @RequiredArgsConstructor
