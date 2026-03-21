@@ -7,6 +7,14 @@ import com.accenture.franquicias_api.application.usecase.branch.CreateBranchUseC
 import com.accenture.franquicias_api.application.usecase.branch.DeleteBranchUseCase;
 import com.accenture.franquicias_api.application.usecase.branch.GetBranchesByFranchiseUseCase;
 import com.accenture.franquicias_api.application.usecase.branch.UpdateBranchUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +40,8 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@Tag(name = "Sucursales", description = "Endpoints para gestionar sucursales de franquicias (CRUD con autenticación)")
+@SecurityRequirement(name = "Authorization")
 public class BranchController {
     
     private final CreateBranchUseCase createBranchUseCase;
@@ -44,7 +54,23 @@ public class BranchController {
      * POST /api/franchises/{franchiseId}/branches
      */
     @PostMapping("/franchises/{franchiseId}/branches")
+    @Operation(
+        summary = "Crear nueva sucursal",
+        description = "Crea una nueva sucursal en una franquicia existente"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "Sucursal creada exitosamente",
+            content = @Content(schema = @Schema(implementation = BranchResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+        @ApiResponse(responseCode = "404", description = "Franquicia no encontrada"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public Mono<ResponseEntity<BranchResponse>> create(
+            @Parameter(description = "ID de la franquicia", required = true, example = "1")
             @PathVariable Long franchiseId,
             @Valid @RequestBody BranchCreateRequest request) {
         return createBranchUseCase.execute(franchiseId, request)
@@ -56,7 +82,23 @@ public class BranchController {
      * PUT /api/branches/{id}
      */
     @PutMapping("/branches/{id}")
+    @Operation(
+        summary = "Actualizar sucursal",
+        description = "Actualiza nombre y datos de una sucursal existente"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Sucursal actualizada exitosamente",
+            content = @Content(schema = @Schema(implementation = BranchResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+        @ApiResponse(responseCode = "404", description = "Sucursal no encontrada"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public Mono<ResponseEntity<BranchResponse>> update(
+            @Parameter(description = "ID de la sucursal a actualizar", required = true, example = "1")
             @PathVariable Long id,
             @Valid @RequestBody BranchUpdateRequest request) {
         return updateBranchUseCase.execute(id, request)
@@ -68,7 +110,19 @@ public class BranchController {
      * DELETE /api/branches/{id}
      */
     @DeleteMapping("/branches/{id}")
-    public Mono<ResponseEntity<Void>> delete(@PathVariable Long id) {
+    @Operation(
+        summary = "Eliminar sucursal",
+        description = "Elimina una sucursal existente (soft delete)"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Sucursal eliminada exitosamente"),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+        @ApiResponse(responseCode = "404", description = "Sucursal no encontrada"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public Mono<ResponseEntity<Void>> delete(
+            @Parameter(description = "ID de la sucursal a eliminar", required = true, example = "1")
+            @PathVariable Long id) {
         return deleteBranchUseCase.execute(id)
             .map(v -> ResponseEntity.noContent().<Void>build());
     }
@@ -78,9 +132,26 @@ public class BranchController {
      * GET /api/franchises/{franchiseId}/branches?page=0&size=20
      */
     @GetMapping("/franchises/{franchiseId}/branches")
+    @Operation(
+        summary = "Obtener sucursales por franquicia",
+        description = "Retorna listado paginado de todas las sucursales de una franquicia"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Listado de sucursales obtenido exitosamente",
+            content = @Content(schema = @Schema(implementation = BranchResponse.class))
+        ),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
+        @ApiResponse(responseCode = "404", description = "Franquicia no encontrada"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public Flux<BranchResponse> getByFranchise(
+            @Parameter(description = "ID de la franquicia", required = true, example = "1")
             @PathVariable Long franchiseId,
+            @Parameter(description = "Número de página (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Tamaño de la página", example = "20")
             @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return getBranchesByFranchiseUseCase.execute(franchiseId, pageable);
