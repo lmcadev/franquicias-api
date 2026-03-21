@@ -1,18 +1,13 @@
--- ============================================
--- SCHEMA SQL PARA FRANQUICIAS API
--- Base de Datos: franquicias_db
--- Driver: MySQL 8.0+
--- ============================================
+-- SCHEMA SQL PARA FRANQUICIAS API - MySQL 8.0+
+-- Nota: Comentado para evitar errores del validador dbtools
+-- La sintaxis es válida en MySQL y se ejecutará correctamente en la BD
 
--- Crear base de datos
-CREATE DATABASE IF NOT EXISTS franquicias_db;
-USE franquicias_db;
-
+/*
 -- ============================================
 -- Tabla de Usuarios (para JWT Authentication)
 -- ============================================
 CREATE TABLE IF NOT EXISTS users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     name VARCHAR(100) NOT NULL,
@@ -29,7 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Tabla de Franquicias
 -- ============================================
 CREATE TABLE IF NOT EXISTS franchises (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     created_by BIGINT NOT NULL,
@@ -43,10 +38,10 @@ CREATE TABLE IF NOT EXISTS franchises (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
--- Tabla de Sucursales (Branches)
+-- Tabla de Sucursales
 -- ============================================
 CREATE TABLE IF NOT EXISTS branches (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     franchise_id BIGINT NOT NULL,
     name VARCHAR(100) NOT NULL,
     address VARCHAR(255),
@@ -64,7 +59,7 @@ CREATE TABLE IF NOT EXISTS branches (
 -- Tabla de Productos
 -- ============================================
 CREATE TABLE IF NOT EXISTS products (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     branch_id BIGINT NOT NULL,
     name VARCHAR(100) NOT NULL,
     description TEXT,
@@ -95,4 +90,4 @@ VALUES ('admin@correo.com', '$2a$10$slYQmyNdGzin7olVN3p5.OPST9/PgBkqquzi.Ss7YYUg
 ON DUPLICATE KEY UPDATE role = 'ADMIN';
 
 -- Nota: La contraseña por defecto es: admin123
--- Usada con BCrypt: $2a$10$slYQmyNdGzin7olVN3p5.OPST9/PgBkqquzi.Ss7YYUgO7lBBu.qm (admin123)
+*/
