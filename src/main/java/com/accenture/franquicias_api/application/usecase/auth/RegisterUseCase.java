@@ -7,6 +7,7 @@ import com.accenture.franquicias_api.application.utils.ValidationUtils;
 import com.accenture.franquicias_api.domain.entity.user.User;
 import com.accenture.franquicias_api.domain.enums.UserRole;
 import com.accenture.franquicias_api.domain.repository.user.UserRepository;
+import com.accenture.franquicias_api.infrastructure.security.JwtProvider;
 import com.accenture.franquicias_api.presentation.exception.ConflictException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,7 @@ public class RegisterUseCase {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
     
     public Mono<AuthTokenResponse> execute(AuthRegisterRequest request) {
         // Validaciones
@@ -50,9 +52,9 @@ public class RegisterUseCase {
                 return userRepository.save(user);
             })
             .map(savedUser -> {
-                // Generar JWT token
-                String token = "Bearer_Token_Placeholder_" + savedUser.getId();
-                return userMapper.toResponse(savedUser, token);
+                // Generar JWT token con JwtProvider
+                String token = jwtProvider.generateToken(savedUser.getId(), savedUser.getEmail());
+                return userMapper.toResponse(savedUser, "Bearer " + token);
             });
     }
 }

@@ -5,6 +5,7 @@ import com.accenture.franquicias_api.application.dto.response.auth.AuthTokenResp
 import com.accenture.franquicias_api.application.mapper.user.UserMapper;
 import com.accenture.franquicias_api.application.utils.ValidationUtils;
 import com.accenture.franquicias_api.domain.repository.user.UserRepository;
+import com.accenture.franquicias_api.infrastructure.security.JwtProvider;
 import com.accenture.franquicias_api.presentation.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ public class LoginUseCase {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
     
     public Mono<AuthTokenResponse> execute(AuthLoginRequest request) {
         // Validaciones
@@ -42,9 +44,9 @@ public class LoginUseCase {
                     return Mono.error(new UnauthorizedException("Usuario inactivo"));
                 }
                 
-                // Generar JWT token
-                String token = "Bearer_Token_Placeholder_" + user.getId();
-                return Mono.just(userMapper.toResponse(user, token));
+                // Generar JWT token con JwtProvider
+                String token = jwtProvider.generateToken(user.getId(), user.getEmail());
+                return Mono.just(userMapper.toResponse(user, "Bearer " + token));
             });
     }
 }
