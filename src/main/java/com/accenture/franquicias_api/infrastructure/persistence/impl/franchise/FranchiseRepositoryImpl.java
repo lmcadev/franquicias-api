@@ -4,11 +4,9 @@ import com.accenture.franquicias_api.domain.entity.franchise.Franchise;
 import com.accenture.franquicias_api.domain.repository.franchise.FranchiseRepository;
 import com.accenture.franquicias_api.infrastructure.persistence.entity.franchise.FranchiseEntity;
 import com.accenture.franquicias_api.infrastructure.persistence.mapper.franchise.FranchiseEntityMapper;
+import com.accenture.franquicias_api.infrastructure.persistence.r2dbc.franchise.FranchiseR2dbcRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.r2dbc.core.R2dbcEntityOperations;
-import org.springframework.data.relational.core.query.Criteria;
-import org.springframework.data.relational.core.query.Query;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,62 +16,58 @@ import java.time.LocalDateTime;
 @Repository
 @RequiredArgsConstructor
 public class FranchiseRepositoryImpl implements FranchiseRepository {
-    private final R2dbcEntityOperations entityOperations;
+    private final FranchiseR2dbcRepository r2dbcRepository;
     private final FranchiseEntityMapper mapper;
 
     @Override
     public Mono<Franchise> findById(Long id) {
-        return entityOperations
-            .selectOne(Query.query(
-                Criteria.where("id").is(id)
-                    .and("deleted_at").isNull()
-            ), FranchiseEntity.class)
+        return r2dbcRepository.findByIdAndNotDeleted(id)
             .map(mapper::toDomain);
     }
 
     @Override
     public Flux<Franchise> findAll(Pageable pageable) {
-        return entityOperations
-            .select(Query.query(Criteria.where("deleted_at").isNull())
-                .with(pageable), FranchiseEntity.class)
+        int limit = pageable.getPageSize();
+        int offset = pageable.getPageNumber() * pageable.getPageSize();
+        return r2dbcRepository.findAllNotDeleted(limit, offset)
             .map(mapper::toDomain);
     }
 
     @Override
     public Mono<Franchise> save(Franchise franchise) {
         FranchiseEntity entity = mapper.toEntity(franchise);
-        entity.setCreatedAt(LocalDateTime.now());
+        if (entity.getId() == null) {
+            entity.setCreatedAt(LocalDateTime.now());
+        }
         entity.setUpdatedAt(LocalDateTime.now());
-        return entityOperations.insert(entity)
+        return r2dbcRepository.save(entity)
             .map(mapper::toDomain);
     }
 
     @Override
     public Mono<Void> delete(Long id) {
-        return findById(id)
-            .flatMap(franchise -> {
-                FranchiseEntity entity = mapper.toEntity(franchise);
+        return r2dbcRepository.findByIdAndNotDeleted(id)
+            .flatMap(entity -> {
                 entity.setDeletedAt(LocalDateTime.now());
                 entity.setUpdatedAt(LocalDateTime.now());
-                return entityOperations.update(entity).then();
-            });
+                return r2dbcRepository.save(entity);
+            })
+            .then();
     }
 
     @Override
     public Mono<Franchise> update(Franchise franchise) {
         FranchiseEntity entity = mapper.toEntity(franchise);
         entity.setUpdatedAt(LocalDateTime.now());
-        return entityOperations.update(entity)
+        return r2dbcRepository.save(entity)
             .map(mapper::toDomain);
     }
 
     @Override
     public Flux<Franchise> findByCreatedBy(Long createdBy, Pageable pageable) {
-        return entityOperations
-            .select(Query.query(
-                Criteria.where("created_by").is(createdBy)
-                    .and("deleted_at").isNull())
-                .with(pageable), FranchiseEntity.class)
+        return r2dbcRepository.findByCreatedByAndNotDeleted(createdBy)
+            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+            .take(pageable.getPageSize())
             .map(mapper::toDomain);
     }
 }
