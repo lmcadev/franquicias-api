@@ -54,17 +54,17 @@ public class DatabaseConfig {
         return TransactionalOperator.create(transactionManager);
     }
 
-    /*
     @Bean
     public ConnectionFactoryInitializer initializer(ConnectionFactory connectionFactory) {
         ConnectionFactoryInitializer initializer = new ConnectionFactoryInitializer();
         initializer.setConnectionFactory(connectionFactory);
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        // El esquema usa CREATE IF NOT EXISTS y este flag evita fallos por índices ya creados.
+        populator.setContinueOnError(true);
         populator.addScript(new ClassPathResource("schema.sql"));
 
         initializer.setDatabasePopulator(populator);
         return initializer;
     }
-    */
 }

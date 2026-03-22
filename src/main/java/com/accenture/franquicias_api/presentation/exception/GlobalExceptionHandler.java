@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
 import java.time.LocalDateTime;
@@ -56,6 +57,25 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(ex.getHttpStatus())
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex, ServerWebExchange exchange) {
+        HttpStatus status = (HttpStatus) ex.getStatusCode();
+        log.warn("ResponseStatusException: {} {}", status.value(), ex.getReason());
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .errorCode(status.name())
+                .message(ex.getReason() != null ? ex.getReason() : status.getReasonPhrase())
+                .path(exchange.getRequest().getPath().value())
+                .details(ex.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(status)
                 .body(errorResponse);
     }
 
