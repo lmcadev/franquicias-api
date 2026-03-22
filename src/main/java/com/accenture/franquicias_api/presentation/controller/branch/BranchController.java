@@ -7,6 +7,7 @@ import com.accenture.franquicias_api.application.usecase.branch.CreateBranchUseC
 import com.accenture.franquicias_api.application.usecase.branch.DeleteBranchUseCase;
 import com.accenture.franquicias_api.application.usecase.branch.GetBranchesByFranchiseUseCase;
 import com.accenture.franquicias_api.application.usecase.branch.UpdateBranchUseCase;
+import com.accenture.franquicias_api.presentation.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -64,10 +65,26 @@ public class BranchController {
             description = "Sucursal creada exitosamente",
             content = @Content(schema = @Schema(implementation = BranchResponse.class))
         ),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Franquicia no encontrada"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Franquicia no encontrada",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<BranchResponse>> create(
             @Parameter(description = "ID de la franquicia", required = true, example = "1")
@@ -92,10 +109,26 @@ public class BranchController {
             description = "Sucursal actualizada exitosamente",
             content = @Content(schema = @Schema(implementation = BranchResponse.class))
         ),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Sucursal no encontrada"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Sucursal no encontrada",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<BranchResponse>> update(
             @Parameter(description = "ID de la sucursal a actualizar", required = true, example = "1")
@@ -116,9 +149,21 @@ public class BranchController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Sucursal eliminada exitosamente"),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Sucursal no encontrada"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Sucursal no encontrada",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<Void>> delete(
             @Parameter(description = "ID de la sucursal a eliminar", required = true, example = "1")
@@ -142,9 +187,21 @@ public class BranchController {
             description = "Listado de sucursales obtenido exitosamente",
             content = @Content(schema = @Schema(implementation = BranchResponse.class))
         ),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Franquicia no encontrada"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Franquicia no encontrada",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Flux<BranchResponse> getByFranchise(
             @Parameter(description = "ID de la franquicia", required = true, example = "1")

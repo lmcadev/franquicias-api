@@ -66,7 +66,7 @@ class LoginUseCaseTest {
             .build();
 
         mockResponse = AuthTokenResponse.builder()
-            .token("Bearer eyJhbGciOiJIUzI1NiJ9...")
+            .token("eyJhbGciOiJIUzI1NiJ9...")
             .email("user@example.com")
             .name("Test User")
             .build();
@@ -83,7 +83,7 @@ class LoginUseCaseTest {
             .thenReturn(true);
         when(jwtProvider.generateToken(1L, "user@example.com"))
             .thenReturn("eyJhbGciOiJIUzI1NiJ9...");
-        when(userMapper.toResponse(mockUser, "Bearer eyJhbGciOiJIUzI1NiJ9..."))
+        when(userMapper.toResponse(mockUser, "eyJhbGciOiJIUzI1NiJ9..."))
             .thenReturn(mockResponse);
 
         // Act & Assert
@@ -91,7 +91,7 @@ class LoginUseCaseTest {
             .expectNextMatches(response -> 
                 response.getEmail().equals("user@example.com") &&
                 response.getName().equals("Test User") &&
-                response.getToken().startsWith("Bearer ")
+                response.getToken() != null && !response.getToken().isBlank()
             )
             .verifyComplete();
     }

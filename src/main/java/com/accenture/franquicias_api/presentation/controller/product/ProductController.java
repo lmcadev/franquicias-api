@@ -10,6 +10,7 @@ import com.accenture.franquicias_api.application.usecase.product.GetMaxStockProd
 import com.accenture.franquicias_api.application.usecase.product.GetProductsByBranchUseCase;
 import com.accenture.franquicias_api.application.usecase.product.UpdateProductNameUseCase;
 import com.accenture.franquicias_api.application.usecase.product.UpdateProductStockUseCase;
+import com.accenture.franquicias_api.presentation.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -70,10 +71,26 @@ public class ProductController {
             description = "Producto agregado exitosamente",
             content = @Content(schema = @Schema(implementation = ProductResponse.class))
         ),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Sucursal no encontrada"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Sucursal no encontrada",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<ProductResponse>> add(
             @Parameter(description = "ID de la sucursal", required = true, example = "1")
@@ -98,10 +115,26 @@ public class ProductController {
             description = "Nombre actualizado exitosamente",
             content = @Content(schema = @Schema(implementation = ProductResponse.class))
         ),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Producto no encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<ProductResponse>> updateName(
             @Parameter(description = "ID del producto a actualizar", required = true, example = "1")
@@ -126,10 +159,26 @@ public class ProductController {
             description = "Stock actualizado exitosamente",
             content = @Content(schema = @Schema(implementation = ProductResponse.class))
         ),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Producto no encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<ProductResponse>> updateStock(
             @Parameter(description = "ID del producto a actualizar", required = true, example = "1")
@@ -150,9 +199,21 @@ public class ProductController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Producto eliminado exitosamente"),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Producto no encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<Void>> delete(
             @Parameter(description = "ID del producto a eliminar", required = true, example = "1")
@@ -176,9 +237,21 @@ public class ProductController {
             description = "Listado de productos obtenido exitosamente",
             content = @Content(schema = @Schema(implementation = ProductResponse.class))
         ),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Sucursal no encontrada"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Sucursal no encontrada",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Flux<ProductResponse> getByBranch(
             @Parameter(description = "ID de la sucursal", required = true, example = "1")
@@ -206,9 +279,21 @@ public class ProductController {
             description = "Producto obtenido exitosamente",
             content = @Content(schema = @Schema(implementation = ProductResponse.class))
         ),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Franquicia no encontrada o sin productos"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Franquicia no encontrada o sin productos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<ProductResponse>> getMaxStockByFranchise(
             @Parameter(description = "ID de la franquicia", required = true, example = "1")
