@@ -35,7 +35,7 @@ API REST reactiva para gestionar franquicias, sucursales y productos, con autent
 
 Se requere un archivo `.env` el cual es administrado
 
-## Ejecucion local con Docker (recomendado)
+## Ejecucion local con Docker
 
 Desde la raiz del proyecto:
 

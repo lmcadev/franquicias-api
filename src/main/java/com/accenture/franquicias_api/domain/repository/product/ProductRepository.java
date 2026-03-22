@@ -90,4 +90,13 @@ public interface ProductRepository {
      * @return {@code Mono} conteniendo el producto con máximo stock en la franquicia, vacío si no existen productos
      */
     Mono<Product> findMaxStockByFranchise(Long franchiseId);
+
+    /**
+     * Busca el producto con mayor stock por cada sucursal de una franquicia.
+     * Retorna un flujo con un producto por sucursal.
+     *
+     * @param franchiseId el ID de la franquicia a consultar
+     * @return {@code Flux} con productos de máximo stock por sucursal
+     */
+    Flux<Product> findMaxStockProductsByFranchise(Long franchiseId);
 }
