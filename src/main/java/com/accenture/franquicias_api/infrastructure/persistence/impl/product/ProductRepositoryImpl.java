@@ -150,4 +150,10 @@ public class ProductRepositoryImpl implements ProductRepository {
         return r2dbcRepository.findMaxStockProductByFranchiseId(franchiseId)
             .map(mapper::toDomain);
     }
+
+    @Override
+    public Flux<Product> findMaxStockProductsByFranchise(Long franchiseId) {
+        return r2dbcRepository.findMaxStockProductsByFranchiseId(franchiseId)
+            .map(mapper::toDomain);
+    }
 }

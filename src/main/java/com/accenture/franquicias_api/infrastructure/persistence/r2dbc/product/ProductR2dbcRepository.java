@@ -90,4 +90,21 @@ public interface ProductR2dbcRepository extends R2dbcRepository<ProductEntity, L
         LIMIT 1
         """)
     Mono<ProductEntity> findMaxStockProductByFranchiseId(Long franchiseId);
+
+      @Query("""
+        SELECT sub.id, sub.branch_id, sub.name, sub.description, sub.stock, sub.price,
+             sub.created_at, sub.updated_at, sub.deleted_at
+        FROM (
+          SELECT p.*,
+               ROW_NUMBER() OVER (PARTITION BY p.branch_id ORDER BY p.stock DESC, p.id ASC) AS rn
+          FROM products p
+          INNER JOIN branches b ON p.branch_id = b.id
+          WHERE b.franchise_id = :franchiseId
+            AND p.deleted_at IS NULL
+            AND b.deleted_at IS NULL
+        ) sub
+        WHERE sub.rn = 1
+        ORDER BY sub.branch_id ASC
+        """)
+      Flux<ProductEntity> findMaxStockProductsByFranchiseId(Long franchiseId);
 }

@@ -7,12 +7,14 @@ import com.accenture.franquicias_api.application.dto.response.product.ProductRes
 import com.accenture.franquicias_api.application.usecase.product.AddProductUseCase;
 import com.accenture.franquicias_api.application.usecase.product.DeleteProductUseCase;
 import com.accenture.franquicias_api.application.usecase.product.GetMaxStockProductByFranchiseUseCase;
+import com.accenture.franquicias_api.application.usecase.product.GetMaxStockProductsByFranchiseUseCase;
 import com.accenture.franquicias_api.application.usecase.product.GetProductsByBranchUseCase;
 import com.accenture.franquicias_api.application.usecase.product.UpdateProductNameUseCase;
 import com.accenture.franquicias_api.application.usecase.product.UpdateProductStockUseCase;
 import com.accenture.franquicias_api.presentation.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,6 +57,7 @@ public class ProductController {
     private final DeleteProductUseCase deleteProductUseCase;
     private final GetProductsByBranchUseCase getProductsByBranchUseCase;
     private final GetMaxStockProductByFranchiseUseCase getMaxStockProductByFranchiseUseCase;
+    private final GetMaxStockProductsByFranchiseUseCase getMaxStockProductsByFranchiseUseCase;
     
     /**
      * Agregar nuevo producto a una sucursal
@@ -300,5 +303,42 @@ public class ProductController {
             @PathVariable Long franchiseId) {
         return getMaxStockProductByFranchiseUseCase.execute(franchiseId)
             .map(response -> ResponseEntity.ok(response));
+    }
+
+    /**
+     * Obtener producto con mayor stock por cada sucursal de una franquicia
+     * GET /api/franchises/{franchiseId}/max-stock-products
+     */
+    @GetMapping("/franchises/{franchiseId}/max-stock-products")
+    @Operation(
+        summary = "Obtener máximo stock por sucursal",
+        description = "Retorna un listado con el producto de mayor stock de cada sucursal para la franquicia indicada"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Listado de productos de máximo stock por sucursal obtenido exitosamente",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProductResponse.class)))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Franquicia no encontrada o sin productos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
+    })
+    public Flux<ProductResponse> getMaxStockProductsByFranchise(
+            @Parameter(description = "ID de la franquicia", required = true, example = "1")
+            @PathVariable Long franchiseId) {
+        return getMaxStockProductsByFranchiseUseCase.execute(franchiseId);
     }
 }
