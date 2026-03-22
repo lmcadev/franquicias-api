@@ -19,7 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -56,14 +58,18 @@ class FranchiseControllerTest {
     private FranchiseCreateRequest createRequest;
     private FranchiseUpdateRequest updateRequest;
     private FranchiseResponse franchiseResponse;
+    private Authentication authentication;
 
     @BeforeEach
     void setUp() {
-        // Setup security context with authenticated user
-        UsernamePasswordAuthenticationToken authentication = 
+        // Setup authentication for reactive security context
+        UsernamePasswordAuthenticationToken auth =
             new UsernamePasswordAuthenticationToken("user@example.com", null, null);
-        authentication.setDetails(1L);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        auth.setDetails(1L);
+        authentication = auth;
+
+        // Mantener también el contexto imperativo por compatibilidad con otros tests.
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
         createRequest = FranchiseCreateRequest.builder()
             .name("Nueva Franquicia")
@@ -93,7 +99,7 @@ class FranchiseControllerTest {
         Mono<ResponseEntity<FranchiseResponse>> response = franchiseController.create(createRequest);
 
         // Assert
-        StepVerifier.create(response)
+        StepVerifier.create(response.contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication)))
             .expectNextMatches(entity -> 
                 entity.getStatusCode() == HttpStatus.CREATED &&
                 entity.getBody().getId() == 1L &&

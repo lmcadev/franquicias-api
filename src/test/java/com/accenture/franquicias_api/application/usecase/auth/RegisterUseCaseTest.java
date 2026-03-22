@@ -66,9 +66,10 @@ class RegisterUseCaseTest {
             .role(UserRole.USER)
             .active(true)
             .build();
+        mockUser.setId(1L);
 
         mockResponse = AuthTokenResponse.builder()
-            .token("Bearer eyJhbGciOiJIUzI1NiJ9...")
+            .token("eyJhbGciOiJIUzI1NiJ9...")
             .email("newuser@example.com")
             .name("New User")
             .build();
@@ -78,9 +79,8 @@ class RegisterUseCaseTest {
     @DisplayName("Debe registrar usuario exitosamente")
     void testRegisterSuccess() {
         // Arrange
-        mockUser.setId(1L);
         when(userRepository.findByEmail("newuser@example.com"))
-            .thenReturn(Mono.empty());
+            .thenReturn(Mono.empty(), Mono.just(mockUser));
         when(userMapper.toDomain(validRequest))
             .thenReturn(User.builder()
                 .email("newuser@example.com")
@@ -93,7 +93,7 @@ class RegisterUseCaseTest {
             .thenReturn(Mono.just(mockUser));
         when(jwtProvider.generateToken(1L, "newuser@example.com"))
             .thenReturn("eyJhbGciOiJIUzI1NiJ9...");
-        when(userMapper.toResponse(mockUser, "Bearer eyJhbGciOiJIUzI1NiJ9..."))
+        when(userMapper.toResponse(mockUser, "eyJhbGciOiJIUzI1NiJ9..."))
             .thenReturn(mockResponse);
 
         // Act & Assert
@@ -101,7 +101,7 @@ class RegisterUseCaseTest {
             .expectNextMatches(response -> 
                 response.getEmail().equals("newuser@example.com") &&
                 response.getName().equals("New User") &&
-                response.getToken().startsWith("Bearer ")
+                response.getToken() != null && !response.getToken().isBlank()
             )
             .verifyComplete();
     }

@@ -5,6 +5,7 @@ import com.accenture.franquicias_api.application.dto.request.auth.AuthRegisterRe
 import com.accenture.franquicias_api.application.dto.response.auth.AuthTokenResponse;
 import com.accenture.franquicias_api.application.usecase.auth.LoginUseCase;
 import com.accenture.franquicias_api.application.usecase.auth.RegisterUseCase;
+import com.accenture.franquicias_api.presentation.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -51,11 +52,18 @@ public class AuthController {
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "Datos inválidos o email duplicado"
+            description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "El email ya existe en el sistema",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
         ),
         @ApiResponse(
             responseCode = "500",
-            description = "Error interno del servidor"
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
         )
     })
     public Mono<ResponseEntity<AuthTokenResponse>> register(
@@ -81,11 +89,18 @@ public class AuthController {
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "Credenciales inválidas o usuario no encontrado"
+            description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Credenciales inválidas o usuario inactivo",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
         ),
         @ApiResponse(
             responseCode = "500",
-            description = "Error interno del servidor"
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
         )
     })
     public Mono<ResponseEntity<AuthTokenResponse>> login(

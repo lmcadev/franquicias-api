@@ -53,6 +53,7 @@ class CreateFranchiseUseCaseTest {
             .name("Franquicia Test")
             .description("Descripción de prueba")
             .build();
+        mockFranchise.setId(1L);
 
         mockResponse = FranchiseResponse.builder()
             .id(1L)

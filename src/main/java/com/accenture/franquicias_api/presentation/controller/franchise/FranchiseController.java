@@ -8,6 +8,7 @@ import com.accenture.franquicias_api.application.usecase.franchise.DeleteFranchi
 import com.accenture.franquicias_api.application.usecase.franchise.GetAllFranchisesUseCase;
 import com.accenture.franquicias_api.application.usecase.franchise.GetFranchiseByIdUseCase;
 import com.accenture.franquicias_api.application.usecase.franchise.UpdateFranchiseUseCase;
+import com.accenture.franquicias_api.presentation.exception.ErrorResponse;
 import com.accenture.franquicias_api.presentation.exception.UnauthorizedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -69,10 +70,26 @@ public class FranchiseController {
             description = "Franquicia creada exitosamente",
             content = @Content(schema = @Schema(implementation = FranchiseResponse.class))
         ),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "409", description = "Nombre duplicado"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "Nombre de franquicia duplicado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<FranchiseResponse>> create(
             @Valid @RequestBody FranchiseCreateRequest request) {
@@ -96,10 +113,26 @@ public class FranchiseController {
             description = "Franquicia actualizada exitosamente",
             content = @Content(schema = @Schema(implementation = FranchiseResponse.class))
         ),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Franquicia no encontrada"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Franquicia no encontrada",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<FranchiseResponse>> update(
             @Parameter(description = "ID de la franquicia a actualizar", required = true)
@@ -124,8 +157,16 @@ public class FranchiseController {
             description = "Listado de franquicias obtenido exitosamente",
             content = @Content(schema = @Schema(implementation = FranchiseResponse.class))
         ),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Flux<FranchiseResponse> getAll(
             @Parameter(description = "Número de página (0-based)", example = "0")
@@ -151,9 +192,21 @@ public class FranchiseController {
             description = "Franquicia obtenida exitosamente",
             content = @Content(schema = @Schema(implementation = FranchiseResponse.class))
         ),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Franquicia no encontrada"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Franquicia no encontrada",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<FranchiseResponse>> getById(
             @Parameter(description = "ID de la franquicia", required = true, example = "1")
@@ -173,9 +226,21 @@ public class FranchiseController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Franquicia eliminada exitosamente"),
-        @ApiResponse(responseCode = "401", description = "Usuario no autenticado"),
-        @ApiResponse(responseCode = "404", description = "Franquicia no encontrada"),
-        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+        @ApiResponse(
+            responseCode = "401",
+            description = "Usuario no autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Franquicia no encontrada",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+        )
     })
     public Mono<ResponseEntity<Void>> delete(
             @Parameter(description = "ID de la franquicia a eliminar", required = true, example = "1")
