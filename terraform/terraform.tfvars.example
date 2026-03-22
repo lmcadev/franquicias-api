@@ -1,0 +1,16 @@
+aws_region       = "us-east-1"
+project_name     = "franquicias-api"
+environment      = "dev"
+
+# Reemplaza por tu IP publica con /32 (ejemplo: 200.10.20.30/32)
+ssh_cidr         = "YOUR_PUBLIC_IP/32"
+
+# Debe existir en AWS EC2 > Key Pairs
+key_pair_name    = "Accenture_test"
+
+ec2_instance_type = "t2.micro"
+db_instance_class = "db.t3.micro"
+
+db_name          = "franquicias_db"
+db_username      = "franquicias_user"
+db_password      = "REPLACE_WITH_STRONG_PASSWORD"

@@ -1,0 +1,105 @@
+name: Terraform Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "Operation to run"
+        required: true
+        default: "apply"
+        type: choice
+        options:
+          - apply
+          - destroy
+      auto_approve:
+        description: "Auto approve changes"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: terraform-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_aws_region: us-east-1
+      TF_VAR_project_name: franquicias-api
+      TF_VAR_environment: dev
+      TF_VAR_ssh_cidr: ${{ vars.TF_SSH_CIDR }}
+      TF_VAR_key_pair_name: ${{ vars.TF_KEY_PAIR_NAME }}
+      TF_VAR_ec2_instance_type: t2.micro
+      TF_VAR_db_instance_class: db.t3.micro
+      TF_VAR_db_name: franquicias_db
+      TF_VAR_db_username: franquicias_user
+      TF_VAR_db_password: ${{ secrets.TF_DB_PASSWORD }}
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: terraform
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.7
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-east-1
+
+      - name: Validate required CI variables
+        run: |
+          test -n "${TF_VAR_ssh_cidr}" || (echo "Missing repo variable TF_SSH_CIDR" && exit 1)
+          test -n "${TF_VAR_key_pair_name}" || (echo "Missing repo variable TF_KEY_PAIR_NAME" && exit 1)
+          test -n "${TF_VAR_db_password}" || (echo "Missing repo secret TF_DB_PASSWORD" && exit 1)
+
+      - name: Terraform init
+        run: terraform init -input=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan (apply)
+        if: ${{ github.event.inputs.operation == 'apply' }}
+        run: terraform plan -input=false -no-color -out=tfplan
+
+      - name: Terraform apply
+        if: ${{ github.event.inputs.operation == 'apply' && github.event.inputs.auto_approve == 'true' }}
+        run: terraform apply -input=false -auto-approve tfplan
+
+      - name: Terraform outputs
+        if: ${{ github.event.inputs.operation == 'apply' && github.event.inputs.auto_approve == 'true' }}
+        run: terraform output
+
+      - name: Terraform apply (manual approval in logs)
+        if: ${{ github.event.inputs.operation == 'apply' && github.event.inputs.auto_approve != 'true' }}
+        run: |
+          echo "auto_approve=false. Re-run workflow with auto_approve=true to apply changes."
+          terraform show -no-color tfplan
+
+      - name: Terraform plan destroy
+        if: ${{ github.event.inputs.operation == 'destroy' }}
+        run: terraform plan -destroy -input=false -no-color -out=tfdestroy
+
+      - name: Terraform destroy
+        if: ${{ github.event.inputs.operation == 'destroy' && github.event.inputs.auto_approve == 'true' }}
+        run: terraform destroy -input=false -auto-approve
+
+      - name: Terraform destroy (manual approval in logs)
+        if: ${{ github.event.inputs.operation == 'destroy' && github.event.inputs.auto_approve != 'true' }}
+        run: |
+          echo "auto_approve=false. Re-run workflow with auto_approve=true to destroy resources."
+          terraform show -no-color tfdestroy
