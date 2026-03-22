@@ -33,7 +33,33 @@ API REST reactiva para gestionar franquicias, sucursales y productos, con autent
 
 ## Variables de entorno
 
-Se requere un archivo `.env` el cual es administrado
+Se requere un archivo `.env` el cual es administrado por correo electronico. Este archivo no se encuentra en el repositorio por seguridad.
+
+una vez descargado el archivo `.env`, se debe colocar en la raiz del proyecto, al mismo nivel que el `pom.xml` y el `docker-compose-local.yml`.
+
+
+## Instalación
+
+1. Clonar el repositorio
+```bash
+git clone https://github.com/lmcadev/franquicias-api.git
+```
+
+2. Descargar el archivo `.env` desde el correo electronico proporcionado y colocarlo en la raiz del proyecto.
+
+3. Ejecutar comando de Docker Compose para levantar la API en local, instrucciones detalladas en la seccion "Ejecucion local con Docker" mas abajo.
+
+4. Acceder a la API y a la documentacion Swagger UI en `http://localhost:8080/swagger-ui.html` o realizar la importacion de la coleccion Postman con OPENAPI JSON en `http://localhost:8080/v3/api-docs`
+
+5. generar el token JWT para autenticacion en el caso de swagger, usando el endpoint de login, y pegarlo en el boton Autorize de Swagger UI para probar los endpoints protegidos. En el caso de postman generar el token JWT que se encuentra en /api/auth/login y pegarlo en la seccion de Authorization usando el esquema Bearer Token como una variable.
+
+6. datos de autenticacion para pruebas:
+    {
+  "email": "admin@correo.com",
+  "password": "admin123"
+    }
+
+7. explorar los endpoints  y validar que la funcionalidad de gestion de franquicias, sucursales y productos funciona correctamente.
 
 ## Ejecucion local con Docker
 
@@ -59,11 +85,16 @@ docker logs -f franquicias-api-local
 
 ## Endpoints locales utiles
 
-- API base: `http://localhost:8080`
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
 - OpenAPI JSON (perfil local): `http://localhost:8080/v3/api-docs`
 
+## Despliegue AWS Endpoints
 
+- Infraestructura provisionada con Terraform
+- EC2 para runtime de API
+- RDS MySQL para persistencia
+- Swagger UI: `http://ec2-54-227-120-171.compute-1.amazonaws.com/api/v1/swagger-ui.html`
+- OpenAPI JSON: `http://ec2-54-227-120-171.compute-1.amazonaws.com/api/v1/api-docs`
 
 ## Tests
 
@@ -89,34 +120,6 @@ Criterio de exito:
 - `Failures: 0`
 - `Errors: 0`
 
-### Pruebas funcionales (smoke test local)
-
-Con la API levantada en local, validar endpoints clave.
-
-En Windows PowerShell:
-
-```powershell
-$base='http://localhost:8080'
-$r0=Invoke-WebRequest -Uri ($base + '/swagger-ui.html') -Method Get -SkipHttpErrorCheck
-"SWAGGER_STATUS=$($r0.StatusCode)"
-
-$email='local.test'+(Get-Date -Format 'yyyyMMddHHmmss')+'@correo.com'
-$pwd='Pass12345!'
-
-$reg=@{name='Local User';email=$email;password=$pwd} | ConvertTo-Json -Compress
-$r1=Invoke-WebRequest -Uri ($base + '/api/auth/register') -Method Post -ContentType 'application/json' -Body $reg -SkipHttpErrorCheck
-"REGISTER_STATUS=$($r1.StatusCode)"
-
-$login=@{email=$email;password=$pwd} | ConvertTo-Json -Compress
-$r2=Invoke-WebRequest -Uri ($base + '/api/auth/login') -Method Post -ContentType 'application/json' -Body $login -SkipHttpErrorCheck
-"LOGIN_STATUS=$($r2.StatusCode)"
-```
-
-Resultado esperado:
-
-- `SWAGGER_STATUS=200`
-- `REGISTER_STATUS=201`
-- `LOGIN_STATUS=200`
 
 ## Estructura del proyecto
 
@@ -137,14 +140,5 @@ docker-compose-local.yml
 docker-compose-produccion.yml
 terraform/
 ```
-
-## Despliegue AWS
-
-- Infraestructura provisionada con Terraform
-- EC2 para runtime de API
-- RDS MySQL para persistencia
-- Swagger en EC2: `http://ec2-54-227-120-171.compute-1.amazonaws.com/api/v1/swagger-ui/index.html`
-- OpenAPI en EC2: `http://ec2-54-227-120-171.compute-1.amazonaws.com/api/v1/api-docs`
-
 
 ## Proyecto desarrollado por Luis Miguel Castañeda para Accenture - Franquicias API
