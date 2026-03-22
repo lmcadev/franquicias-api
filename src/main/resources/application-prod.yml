@@ -19,6 +19,8 @@ server:
 spring:
   application:
     name: franquicias-api
+  webflux:
+    base-path: /api/v1
 
   # ============================================================================
   # WEB - Error Handling
@@ -33,7 +35,7 @@ spring:
   # DATASOURCE - R2DBC (Reactive Driver para MySQL)
   # ============================================================================
   r2dbc:
-    url: r2dbc:mysql://${DB_HOST:mysql-db}:${DB_PORT:3306}/${DB_NAME:franquicias_db}?sslMode=VERIFY_IDENTITY
+    url: r2dbc:mysql://${DB_HOST:mysql-db}:${DB_PORT:3306}/${DB_NAME:franquicias_db}?sslMode=${DB_SSL_MODE:DISABLED}
     username: ${DB_USERNAME:franquicias_user}
     password: ${DB_PASSWORD}
     pool:
@@ -109,13 +111,13 @@ spring:
       total-size-cap: 5GB
 
 # ============================================================================
-# SPRINGDOC - OpenAPI 3.1 / Swagger DESHABILITADO en Producción
+# SPRINGDOC - OpenAPI 3.1 / Swagger habilitable en Producción
 # ============================================================================
 springdoc:
   swagger-ui:
-    enabled: false
+    enabled: ${SWAGGER_ENABLED:true}
   api-docs:
-    enabled: false
+    enabled: ${SWAGGER_ENABLED:true}
   apiinfo:
     title: Franquicias API
     version: 1.0.0

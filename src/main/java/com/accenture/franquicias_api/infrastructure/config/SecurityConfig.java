@@ -143,21 +143,33 @@ public class SecurityConfig {
                 // CONFIGURACIÓN DE AUTORIZACIÓN (RUTAS)
                 // ========================
                 .authorizeExchange(authorize -> authorize
-                        // ⭐ RUTAS PÚBLICAS (sin autenticación requerida)
+                        //  RUTAS PÚBLICAS (sin autenticación requerida)
                         .pathMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/v1/api/auth/register").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/v1/api/auth/login").permitAll()
 
                         // Rutas de salud (para load balancers, health checks)
                         .pathMatchers("/actuator/**").permitAll()
+                        .pathMatchers("/api/v1/actuator/**").permitAll()
 
                         // Rutas de Swagger UI y OpenAPI (documentación)
                         .pathMatchers("/swagger-ui.html").permitAll()
                         .pathMatchers("/swagger-ui/**").permitAll()
                         .pathMatchers("/v3/api-docs").permitAll()
                         .pathMatchers("/v3/api-docs/**").permitAll()
+                        .pathMatchers("/api-docs").permitAll()
+                        .pathMatchers("/api-docs/**").permitAll()
                         .pathMatchers("/webjars/**").permitAll()
+                        .pathMatchers("/api/v1/swagger-ui.html").permitAll()
+                        .pathMatchers("/api/v1/swagger-ui/**").permitAll()
+                        .pathMatchers("/api/v1/v3/api-docs").permitAll()
+                        .pathMatchers("/api/v1/v3/api-docs/**").permitAll()
+                        .pathMatchers("/api/v1/api-docs").permitAll()
+                        .pathMatchers("/api/v1/api-docs/**").permitAll()
+                        .pathMatchers("/api/v1/webjars/**").permitAll()
 
-                        // ⭐ RUTAS PROTEGIDAS (requieren JWT válido)
+                        //  RUTAS PROTEGIDAS (requieren JWT válido)
                         // El AuthenticationWebFilter validará automáticamente
                         .anyExchange().authenticated()
                 )
@@ -175,7 +187,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // ⚠️ Cambiar en producción a: config.setAllowedOrigins(List.of("https://tudominio.com"))
+        //  Cambiar en producción a: config.setAllowedOrigins(List.of("https://tudominio.com"))
         config.setAllowedOriginPatterns(Arrays.asList("*"));
 
         // Permitir todos los métodos HTTP estándar
