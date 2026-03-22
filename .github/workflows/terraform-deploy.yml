@@ -36,7 +36,7 @@ jobs:
       TF_VAR_project_name: franquicias-api
       TF_VAR_environment: dev
       TF_VAR_ssh_cidr: ${{ vars.TF_SSH_CIDR || secrets.TF_SSH_CIDR }}
-      TF_VAR_key_pair_name: ${{ vars.TF_KEY_PAIR_NAME }}
+      TF_VAR_key_pair_name: ${{ vars.TF_KEY_PAIR_NAME || 'Accenture_test' }}
       TF_VAR_ec2_instance_type: t2.micro
       TF_VAR_db_instance_class: db.t3.micro
       TF_VAR_db_name: franquicias_db
@@ -66,7 +66,6 @@ jobs:
       - name: Validate required CI variables
         run: |
           test -n "${TF_VAR_ssh_cidr}" || (echo "Missing TF_SSH_CIDR (set repo Variable TF_SSH_CIDR or Secret TF_SSH_CIDR)" && exit 1)
-          test -n "${TF_VAR_key_pair_name}" || (echo "Missing repo variable TF_KEY_PAIR_NAME" && exit 1)
           test -n "${TF_VAR_db_password}" || (echo "Missing repo secret TF_DB_PASSWORD" && exit 1)
 
       - name: Terraform init
